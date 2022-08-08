@@ -1,0 +1,76 @@
+---
+- name: "{{ service_name }} | setup | nginx | Install Nginx"
+  ansible.builtin.apt:
+    name: nginx
+  when: "'nginx' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | nginx | Add Nginx user to {{ service_user }} group"
+  ansible.builtin.user:
+    name: "{{ server_user }}"
+    groups: "{{ service_user }}"
+    append: yes
+
+- name: "{{ service_name }} | setup | nginx | Checking certs"
+  ansible.builtin.stat:
+    path: "/etc/ssl/private/nginx-selfsigned.key"
+  register: certs_file_stat
+
+- name: "{{ service_name }} | setup | nginx | Generate certs"
+  ansible.builtin.shell: sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/" -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+  when: not certs_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | nginx | Remove default config"
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: "{{ service_name }} | setup | nginx | Checking custom config"
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ role_path }}/templates/nginx/{{ service_name }}.conf.j2"
+  register: config_file_stat
+
+- name: "{{ service_name }} | setup | nginx | Set custom service config"
+  ansible.builtin.set_fact:
+    nginx_config_file: "nginx/{{ service_name }}.conf.j2"
+  when: config_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | nginx | Set default service config"
+  ansible.builtin.set_fact:
+    nginx_config_file: nginx/main.conf.j2
+  when: not config_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | nginx | Set FastCGI config"
+  ansible.builtin.set_fact:
+    nginx_fastcgi_pass: "unix:/var/run/{{ service_user }}-{{ service_name }}-php-fpm.sock"
+  when: php_pool
+
+- name: "{{ service_name }} | setup | nginx | Set FastCGI config"
+  ansible.builtin.set_fact:
+    nginx_fastcgi_pass: "unix:/var/run/php/php-fpm.sock"
+  when: not php_pool
+
+- name: "{{ service_name }} | setup | nginx | Config Nginx"
+  ansible.builtin.template:
+    src: "{{ nginx_config_file }}"
+    dest: "/etc/nginx/sites-available/{{ service_user }}-{{ service_name }}"
+
+- name: "{{ service_name }} | setup | nginx | Enable service"
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ service_user }}-{{ service_name }}"
+    dest: "/etc/nginx/sites-enabled/{{ service_user }}-{{ service_name }}"
+    state: link
+
+- name: "{{ service_name }} | setup | nginx | Restart Nginx"
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+
+- name: "{{ service_name }} | setup | nginx | Update the /etc/hosts file with service host"
+  lineinfile:
+    dest: "/etc/hosts"
+    regexp: "127.0.0.1\t{{ server_prefix }}.*"
+    line: "127.0.0.1\t{{ server_host }}"
+    state: present
+  when: server_add_host
+

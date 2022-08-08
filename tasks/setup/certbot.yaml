@@ -1,0 +1,18 @@
+---
+- name: "{{ service_name }} | setup | certbot | Install python3"
+  ansible.builtin.apt:
+    name: python3
+    update_cache: true
+  when: "'python3' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | certbot | Install Certbot"
+  ansible.builtin.pip:
+    name: [certbot, certbot-nginx]
+
+- name: "{{ service_name }} | setup | certbot | Generate SSL certificate"
+  ansible.builtin.shell: "sudo certbot --nginx --agree-tos --preferred-challenges http --email {{ tech_email }} -d {{ server_host }} --non-interactive --redirect"
+
+- name: "{{ service_name }} | setup | certbot | Restart Nginx"
+  ansible.builtin.service:
+    name: nginx
+    state: restarted

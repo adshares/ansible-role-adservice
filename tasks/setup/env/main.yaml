@@ -1,0 +1,58 @@
+---
+- name: "{{ service_name }} | setup | env | Generate app secret"
+  ansible.builtin.shell: openssl rand -hex 16
+  register: cmd
+
+- name: "{{ service_name }} | setup | env | Set app secret"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_SECRET='
+    line: "APP_SECRET={{ cmd.stdout }}"
+
+- name: "{{ service_name }} | setup | env | Set app name"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_NAME='
+    line: "APP_NAME=\"{{ server_name }}[{{ service_name }}]\""
+
+- name: "{{ service_name }} | setup | env | Set server port"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_PORT='
+    line: "APP_PORT={{ service_port | default(server_port) }}"
+
+- name: "{{ service_name }} | setup | env | Set server port"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_HOST='
+    line: "APP_HOST={{ server_host }}"
+
+- name: "{{ service_name }} | setup | env | Set database url"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DATABASE_URL='
+    line: "DATABASE_URL=mysql://{{ service_user }}:{{ service_user }}@localhost:3306/{{ service_user }}_{{ service_name | replace('-', '_') }}"
+
+- name: "{{ service_name }} | setup | env | Set database username"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DB_USERNAME='
+    line: "DB_USERNAME={{ service_user }}"
+
+- name: "{{ service_name }} | setup | env | Set database password"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DB_PASSWORD='
+    line: "DB_PASSWORD={{ service_user }}"
+
+- name: "{{ service_name }} | setup | env | Set database name"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DB_DATABASE='
+    line: "DB_DATABASE={{ service_user }}_{{ service_name | replace('-', '_') }}"
+
+- name: "{{ service_name }} | setup | env | Set database name"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^LOG_FILE_PATH='
+    line: "LOG_FILE_PATH={{ log_dir }}/{{ service_name }}.log"

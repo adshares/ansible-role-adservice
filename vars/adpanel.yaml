@@ -1,0 +1,12 @@
+setup_mysql: false
+setup_node: true
+setup_php: false
+setup_certbot: true
+server_prefix: "{{ adpanel_prefix }}."
+service_env_file_dist: .env.dist
+service_env_file_local: .env
+service_copy_env_file: ~
+service_storage_dir: ~
+deploy_refresh: ~
+deploy_clear: ~
+deploy_services: ~

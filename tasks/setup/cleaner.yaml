@@ -1,0 +1,34 @@
+---
+- name: "{{ service_name }} | setup | cleaner | Checking config"
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ role_path }}/templates/cleaner/{{ service_name }}.bash.j2"
+  register: config_file_stat
+
+- name: "{{ service_name }} | setup | cleaner | Creates cleaner scripts directory"
+  file:
+    path: "{{ vendor_dir }}/.bin"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0755
+  when: config_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | cleaner | Copy cleaner scripts"
+  template:
+    src: cleaner/{{ service_name }}.bash.j2
+    dest: "{{ vendor_dir }}/.bin/{{ service_name }}_cleaner.bash"
+    mode: 0500
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+  when: config_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | cleaner | Add clean db script to cron"
+  cron:
+    name: "{{ service_name }} | cleaner"
+    minute: "5"
+    hour: "*/1"
+    job: "{{ vendor_dir }}/.bin/{{ service_name }}_cleaner.bash 2>&1 | tee -a {{ log_dir }}/{{ service_name }}_cleaner.log"
+  become_user: "{{ service_user }}"
+  become: true
+  when: config_file_stat.stat.exists

@@ -1,0 +1,48 @@
+---
+- name: "{{ service_name }} | setup | env | Set app name"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_NAME='
+    line: "APP_NAME=\"{{ server_name }}\""
+
+- name: "{{ service_name }} | setup | env | Set server port"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_PORT='
+    line: "APP_PORT={{ service_port | default(server_port) }}"
+
+- name: "{{ service_name }} | setup | env | Set server port"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_HOST='
+    line: "APP_HOST={{ server_host }}"
+
+- name: "{{ service_name }} | setup | env | Set AdController URL"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADCONTROLLER_URL='
+    line: "ADCONTROLLER_URL=https://{{ server_host }}/acp"
+
+- name: "{{ service_name }} | setup | env | Set AdServer URL"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADSERVER_URL='
+    line: "ADSERVER_URL=https://{{ adserver_prefix }}.{{ server_domain }}"
+
+- name: "{{ service_name }} | setup | env | Set support e-mail"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^SUPPORT_EMAIL='
+    line: "SUPPORT_EMAIL={{ support_email }}"
+
+- name: "{{ service_name }} | setup | env | Set support telegram"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^SUPPORT_TELEGRAM='
+    line: "SUPPORT_TELEGRAM="
+
+- name: "{{ service_name }} | setup | env | Set support chat"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^SUPPORT_CHAT='
+    line: "SUPPORT_CHAT="

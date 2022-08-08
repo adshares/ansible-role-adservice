@@ -1,0 +1,25 @@
+---
+- name: "{{ service_name }} | setup | cron | add ops:es:update-stats"
+  cron:
+    name: "{{ service_name }} | ops:es:update-stats"
+    minute: "35"
+    job: "nice php {{ service_dir }}/bin/console ops:es:update-stats -t 6"
+  become_user: "{{ service_user }}"
+  become: true
+
+- name: "{{ service_name }} | setup | cron | add ops:es:update-exp"
+  cron:
+    name: "{{ service_name }} | ops:es:update-exp"
+    minute: "*/5"
+    job: "nice php {{ service_dir }}/bin/console ops:es:update-exp"
+  become_user: "{{ service_user }}"
+  become: true
+
+- name: "{{ service_name }} | setup | cron | add ops:es:clean-events"
+  cron:
+    name: "{{ service_name }} | ops:es:clean-events"
+    minute: "19"
+    hour: "3"
+    job: "php {{ service_dir }}/bin/console ops:es:clean-events"
+  become_user: "{{ service_user }}"
+  become: true

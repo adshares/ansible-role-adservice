@@ -1,0 +1,37 @@
+[program:{{ service_user }}_{{ service_name }}_worker]
+directory=/opt/{{ service_user }}/{{ service_name }}
+command=php artisan queue:work --queue=default --tries=200 --delay=600
+pidfile=/var/run/{{ service_user }}/{{ service_name }}_worker.pid
+
+user={{ service_user }}
+
+autostart=true
+autorestart=true
+startretries=20
+
+stdout_logfile={{ log_dir }}/{{ service_name }}_worker.log
+stdout_logfile_maxbytes=5000000
+
+stderr_logfile={{ log_dir }}/{{ service_name }}_worker.log
+stderr_logfile_maxbytes=5000000
+
+environment=
+
+[program:{{ service_user }}_{{ service_name }}_worker_ads]
+directory=/opt/{{ service_user }}/{{ service_name }}
+command=php artisan queue:work --queue=ads --tries=200 --delay=600
+pidfile=/var/run/{{ service_user }}/{{ service_name }}_worker_ads.pid
+
+user={{ service_user }}
+
+autostart=true
+autorestart=true
+startretries=20
+
+stdout_logfile={{ log_dir }}/{{ service_name }}_worker_ads.log
+stdout_logfile_maxbytes=5000000
+
+stderr_logfile={{ log_dir }}/{{ service_name }}_worker_ads.log
+stderr_logfile_maxbytes=5000000
+
+environment=

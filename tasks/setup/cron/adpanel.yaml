@@ -1,0 +1,16 @@
+---
+- name: "{{ service_name }} | setup | cron | add build preview"
+  cron:
+    name: "{{ service_name }} | build preview"
+    minute: "*/5"
+    job: "{{ service_dir }}/bin/build-preview-html.sh &> /dev/null"
+  become_user: "{{ service_user }}"
+  become: true
+
+- name: "{{ service_name }} | setup | cron | add replace index"
+  cron:
+    name: "{{ service_name }} | replace index"
+    minute: "59"
+    job: "{{ service_dir }}/bin/replace-index-with-preview.sh &> /dev/null"
+  become_user: "{{ service_user }}"
+  become: true

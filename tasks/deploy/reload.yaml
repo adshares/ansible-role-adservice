@@ -1,0 +1,61 @@
+---
+## Reload
+- name: "{{ service_name }} | deploy | reload | Start maintenance"
+  ansible.builtin.lineinfile:
+    path: "{{ deploy_dir }}/{{ service_env_file_local }}"
+    regexp: '^APP_MAINTENANCE='
+    line: "APP_MAINTENANCE=1"
+  when: service_env_file_local != None and service_env_file_local != False and service_env_file_local|length > 0
+
+- name: "{{ service_name }} | deploy | reload | Copy new version int service dir {{ service_dir }}"
+  ansible.builtin.file:
+    src: "{{ deploy_dir }}"
+    dest: "{{ service_dir }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    state: link
+
+- name: "{{ service_name }} | deploy | reload | Change service dir owner"
+  ansible.builtin.shell: "chown -h {{ service_user }}:{{ service_user }} {{ service_dir }}"
+  args:
+    warn: False
+
+- name: "{{ service_name }} | deploy | reload | Refresh env"
+  ansible.builtin.command: "{{ deploy_refresh }}"
+  become_user: "{{ service_user }}"
+  when: deploy_refresh != None and deploy_refresh != False and deploy_refresh|length > 0
+
+- name: "{{ service_name }} | deploy | reload | Checking migrate script"
+  ansible.builtin.stat:
+    path: "{{ deploy_dir }}/deploy/migrate.sh"
+  register: migrate_script_stat
+
+- name: "{{ service_name }} | deploy | reload | Migrate service"
+  ansible.builtin.shell: "{{ service_dir }}/deploy/migrate.sh {{ service_dir }}"
+  become_user: "{{ service_user }}"
+  when: migrate_script_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | reload | Stop maintenance"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}/{{ service_env_file_local }}"
+    regexp: '^APP_MAINTENANCE='
+    line: "APP_MAINTENANCE=0"
+  when: service_env_file_local != None and service_env_file_local != False and service_env_file_local|length > 0
+
+- name: "{{ service_name }} | deploy | reload | Refresh env"
+  ansible.builtin.command: "{{ deploy_refresh }}"
+  become_user: "{{ service_user }}"
+  when: deploy_refresh != None and deploy_refresh != False and deploy_refresh|length > 0
+
+- name: "{{ service_name }} | deploy | reload | Clear cache"
+  ansible.builtin.command: "{{ deploy_clear }}"
+  become_user: "{{ service_user }}"
+  when: deploy_clear != None and deploy_clear != False and deploy_clear|length > 0
+
+- name: "{{ service_name }} | deploy | reload | Restart services"
+  ansible.builtin.service:
+    name: "{{ deploy_service }}"
+    state: reloaded
+  loop: "{{ deploy_services if deploy_services is iterable else [] }}"
+  loop_control:
+    loop_var: deploy_service

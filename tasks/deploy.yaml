@@ -1,0 +1,34 @@
+---
+- name: "{{ service_name }} | deploy | Pulling"
+  ansible.builtin.debug:
+    msg: "Pulling {{ repo_version }} from {{ repo_url }} into {{ service_user }}@{{ deploy_dir }}"
+
+- name: "{{ service_name }} | deploy | Checking service dir {{ service_dir }}"
+  ansible.builtin.stat:
+    path: "{{ service_dir }}"
+  register: service_dir_stat
+
+- name: "{{ service_name }} | deploy | Init service"
+  include_tasks: deploy/init.yaml
+  when: not service_dir_stat.stat.exists or service_dir_stat.stat.isdir
+
+- name: "{{ service_name }} | deploy | Deploy JWT"
+  include_tasks: deploy/jwt.yaml
+  when: copy_jwt or create_jwt
+
+- name: "{{ service_name }} | deploy | Create storage"
+  include_tasks: deploy/storage.yaml
+  when: service_storage_dir != None and service_storage_dir != False and service_storage_dir|length > 0
+
+- name: "{{ service_name }} | deploy | Update service"
+  include_tasks: deploy/update.yaml
+
+- name: "{{ service_name }} | deploy | Build service"
+  include_tasks: deploy/build.yaml
+
+- name: "{{ service_name }} | deploy | Reload service"
+  include_tasks: deploy/reload.yaml
+
+- name: "{{ service_name }} | deploy | Clean deploy dirs"
+  include_tasks: deploy/clean.yaml
+  when: service_dir_stat.stat.exists

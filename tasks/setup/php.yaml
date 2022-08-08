@@ -1,0 +1,79 @@
+---
+- name: "{{ service_name }} | setup | php | Set PHP version"
+  ansible.builtin.set_fact:
+    php_package: "php{{ php_version }}"
+
+- name: "{{ service_name }} | setup | php | Add ondrej/php repository"
+  ansible.builtin.apt_repository:
+    repo: ppa:ondrej/php
+  when: "php_package not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | php | Update apt cache"
+  ansible.builtin.apt:
+    update_cache: true
+  when: "php_package not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | php | Install PHP {{ php_version }}"
+  ansible.builtin.apt:
+    name:
+      - "{{ php_package }}"
+      - "{{ php_package }}-fpm"
+      - "{{ php_package }}-mysql"
+      - "{{ php_package }}-bcmath"
+      - "{{ php_package }}-bz2"
+      - "{{ php_package }}-curl"
+      - "{{ php_package }}-gd"
+      - "{{ php_package }}-intl"
+      - "{{ php_package }}-mbstring"
+      - "{{ php_package }}-zip"
+      - "{{ php_package }}-simplexml"
+      - "{{ php_package }}-apcu"
+      - "{{ php_package }}-imagick"
+      - "{{ php_package }}-gmp"
+#  when: php_version is match("7.*")
+-
+- name: "{{ service_name }} | setup | php | Config PHP execution time"
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ php_version }}/cli/php.ini"
+    regexp: '^max_execution_time ='
+    line: "max_execution_time = 300"
+
+- name: "{{ service_name }} | setup | php | Config PHP upload size"
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ php_version }}/fpm/php.ini"
+    regexp: '^upload_max_filesize ='
+    line: "upload_max_filesize = 32M"
+
+- name: "{{ service_name }} | setup | php | Config PHP-FPM pool"
+  ansible.builtin.template:
+    src: php-fpm-pool.conf.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ service_user }}-{{ service_name }}-fpm-pool.conf"
+  when: php_pool
+
+- name: "{{ service_name }} | setup | php | Restart PHP-FPM"
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+
+- name: "{{ service_name }} | setup | php | Checking Composer"
+  ansible.builtin.stat:
+    path: /usr/local/bin/composer
+  register: composer_stat
+
+- name: "{{ service_name }} | setup | php | Download and install Composer"
+  ansible.builtin.shell: curl -sS https://getcomposer.org/installer | php
+  args:
+    chdir: /usr/src/
+    creates: /usr/local/bin/composer
+    warn: false
+  when: not composer_stat.stat.exists
+
+- name: "{{ service_name }} | setup | php | Add Composer to global path"
+  ansible.builtin.copy:
+    dest: /usr/local/bin/composer
+    group: root
+    mode: '0755'
+    owner: root
+    src: /usr/src/composer.phar
+    remote_src: yes
+  when: not composer_stat.stat.exists

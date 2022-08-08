@@ -1,0 +1,28 @@
+---
+- name: "{{ service_name }} | setup | logrotate | Create log dir {{ log_dir }}"
+  ansible.builtin.file:
+    path: "{{ log_dir }}"
+    state: directory
+
+- name: "{{ service_name }} | setup | logrotate | Change log storage dir owner"
+  ansible.builtin.shell: "chown -h {{ service_user }}:{{ service_user }} {{ log_dir }}"
+  args:
+    warn: False
+
+- name: "adservice : {{ service_name }} | setup | logrotate | Install logrotate"
+  include_role:
+    name: nickhammond.logrotate
+  vars:
+    # full explanation of options can be found here:
+    # https://linux.die.net/man/8/logrotate
+    logrotate_scripts:
+      - name: "{{ service_name }}"
+        path: "{{ log_dir }}/{{ service_name }}*.log"
+        options:
+          - daily
+          - size 50M
+          - rotate 4
+          - missingok
+          - compress
+          - delaycompress
+          - copytruncate

@@ -1,0 +1,47 @@
+---
+## Storage
+- name: "{{ service_name }} | deploy | storage | Ensure storage exists"
+  ansible.builtin.file:
+    path: "{{ storage_dir }}"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0777'
+
+- name: "{{ service_name }} | deploy | storage | Checking storage dir {{ storage_dir }}"
+  ansible.builtin.stat:
+    path: "{{ storage_dir }}/{{ service_name }}"
+  register: storage_dir_stat
+
+- name: "{{ service_name }} | deploy | storage | Checking service storage dir {{ service_storage_dir }}"
+  ansible.builtin.stat:
+    path: "{{ service_storage_dir }}"
+  register: service_storage_dir_stat
+
+- name: "{{ service_name }} | deploy | storage | Create storage dir {{ storage_dir }}/{{ service_name }}"
+  ansible.builtin.file:
+    path: "{{ storage_dir }}/{{ service_name }}"
+    state: directory
+  when: not storage_dir_stat.stat.exists and not service_storage_dir_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | storage | Copy service storage dir {{ service_storage_dir }}"
+  ansible.builtin.shell: "cp -r {{ service_storage_dir }}/* {{ storage_dir }}/{{ service_name }}/ && rm -rf {{ service_storage_dir }} && ln -s {{ storage_dir }} {{ service_storage_dir }}"
+  when: storage_dir_stat.stat.exists and service_storage_dir_stat.stat.exists and service_storage_dir_stat.stat.isdir
+
+- name: "{{ service_name }} | deploy | storage | Move service storage dir {{ service_storage_dir }}"
+  ansible.builtin.shell: "mv {{ service_storage_dir }} {{ storage_dir }}/{{ service_name }} && ln -s {{ storage_dir }} {{ service_storage_dir }}"
+  when: not storage_dir_stat.stat.exists and service_storage_dir_stat.stat.exists and service_storage_dir_stat.stat.isdir
+
+- name: "{{ service_name }} | deploy | storage | Link service's storage"
+  ansible.builtin.file:
+    src: "{{ storage_dir }}/{{ service_name }}"
+    dest: "{{ service_storage_dir }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    state: link
+
+- name: "{{ service_name }} | deploy | storage | Change service storage dir owner"
+  ansible.builtin.shell: "chown -h {{ service_user }}:{{ service_user }} {{ service_storage_dir }}"
+  args:
+    warn: False
+  when: not service_storage_dir_stat.stat.exists or service_storage_dir_stat.stat.isdir

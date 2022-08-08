@@ -1,0 +1,4 @@
+setup_certbot: true
+server_prefix: "{{ aduser_prefix }}."
+server_add_host: true
+php_pool: true

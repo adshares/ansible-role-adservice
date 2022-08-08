@@ -1,0 +1,25 @@
+---
+- name: "{{ service_name }} | setup | node | Add Node.js repository"
+  ansible.builtin.shell: curl -sL https://deb.nodesource.com/setup_14.x | bash -
+  when: "'nodejs' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | node | Install Node.js"
+  ansible.builtin.apt:
+    name: nodejs
+  when: "'nodejs' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | node | Add Yarn key"
+  ansible.builtin.apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+  when: "'yarn' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | node | Add Yarn repository"
+  ansible.builtin.apt_repository:
+    repo: deb https://dl.yarnpkg.com/debian/ stable main
+  when: "'yarn' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | node | Install Yarn"
+  ansible.builtin.apt:
+    name: yarn
+    update_cache: true
+  when: "'yarn' not in ansible_facts.packages"

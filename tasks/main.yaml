@@ -1,0 +1,11 @@
+---
+- name: "{{ service_name }} | Config service"
+  include_tasks: config.yaml
+
+- name: "{{ service_name }} | Setup service"
+  include_tasks: setup.yaml
+  when: setup
+
+- name: "{{ service_name }} | Deploy service"
+  include_tasks: deploy.yaml
+  when: deploy

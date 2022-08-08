@@ -1,0 +1,34 @@
+---
+- name: "{{ service_name }} | setup | mysql | Add Percona repository"
+  ansible.builtin.shell: |
+    wget -q https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb
+    dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb
+  when: "'percona-server-server-5.7' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | mysql | Install Percona"
+  ansible.builtin.apt:
+    name: percona-server-server-5.7
+    update_cache: true
+  when: "'percona-server-server-5.7' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | mysql | Start Percona"
+  ansible.builtin.service:
+    name: mysql
+    state: started
+
+- name: "{{ service_name }} | setup | mysql | Create DB user '{{ service_user }}'"
+  ansible.builtin.shell: echo "CREATE USER IF NOT EXISTS '{{ service_user }}'@'localhost' IDENTIFIED BY '{{ service_user }}';" | mysql
+
+- name: "{{ service_name }} | setup | mysql | Create DB '{{ service_user }}_{{ service_name }}'"
+  ansible.builtin.shell: echo "CREATE DATABASE IF NOT EXISTS {{ service_user }}_{{ service_name | replace('-', '_') }};" | mysql
+
+- name: "{{ service_name }} | setup | mysql | Grant privileges'"
+  ansible.builtin.shell: echo "GRANT ALL ON {{ service_user }}_{{ service_name | replace('-', '_') }}.* TO '{{ service_user }}'@'localhost';" | mysql
+
+- name: "{{ service_name }} | setup | mysql | Flush privileges'"
+  ansible.builtin.shell: echo "FLUSH PRIVILEGES;" | mysql
+
+- name: "{{ service_name }} | setup | mysql | Cleanup"
+  ansible.builtin.file:
+    path: percona-release_latest.$(lsb_release -sc)_all.deb
+    state: absent

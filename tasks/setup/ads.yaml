@@ -1,0 +1,11 @@
+---
+- name: "{{ service_name }} | setup | ads | Add adshares/releases repository"
+  ansible.builtin.apt_repository:
+    repo: ppa:adshares/releases
+  when: "'ads' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | ads | Install ADS"
+  ansible.builtin.apt:
+    name: ads
+    update_cache: true
+  when: "'ads' not in ansible_facts.packages"

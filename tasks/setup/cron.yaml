@@ -1,0 +1,10 @@
+---
+- name: "{{ service_name }} | setup | cron | Checking config"
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ role_path }}/tasks/setup/cron/{{ service_name }}.yaml"
+  register: config_file_stat
+
+- name: "{{ service_name }} | setup | cron | Config cron"
+  include_tasks: "cron/{{ service_name }}.yaml"
+  when: config_file_stat.stat.exists

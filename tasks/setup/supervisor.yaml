@@ -1,0 +1,23 @@
+---
+- name: "{{ service_name }} | setup | supervisor | Checking config"
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ role_path }}/templates/supervisor/{{ service_name }}.conf.j2"
+  register: config_file_stat
+
+- name: "{{ service_name }} | setup | supervisor | Install Supervisor"
+  ansible.builtin.apt:
+    name: supervisor
+  when: config_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | supervisor | Config Supervisor"
+  ansible.builtin.template:
+    src: "supervisor/{{ service_name }}.conf.j2"
+    dest: "/etc/supervisor/conf.d/{{ service_user }}-{{ service_name }}.conf"
+  when: config_file_stat.stat.exists
+
+- name: "{{ service_name }} | setup | supervisor | Restart Supervisor"
+  ansible.builtin.service:
+    name: supervisor
+    state: restarted
+  when: config_file_stat.stat.exists

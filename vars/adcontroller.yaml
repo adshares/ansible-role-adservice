@@ -1,0 +1,4 @@
+setup_node: true
+server_host: localhost
+server_port: "{{ adcontroller_server_port }}"
+copy_jwt: true

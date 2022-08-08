@@ -1,0 +1,33 @@
+---
+- name: "{{ service_name }} | deploy | jwt | Checking private key"
+  ansible.builtin.stat:
+    path: "{{ service_dir }}/config/jwt/private.pem"
+  register: private_key_file_stat
+  when: create_jwt
+
+- name: "{{ service_name }} | deploy | jwt | Generate private key"
+  ansible.builtin.shell: "openssl genrsa -out {{ service_dir }}/config/jwt/private.pem 2048"
+  become: true
+  become_user: "{{ service_user }}"
+  when: create_jwt and not private_key_file_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | jwt | Checking public key"
+  ansible.builtin.stat:
+    path: "{{ service_dir }}/config/jwt/public.pem"
+  register: public_key_file_stat
+  when: create_jwt
+
+- name: "{{ service_name }} | deploy | jwt | Generate public key"
+  ansible.builtin.shell: "openssl rsa -pubout -in {{ service_dir }}/config/jwt/private.pem -out {{ service_dir }}/config/jwt/public.pem"
+  become: true
+  become_user: "{{ service_user }}"
+  when: create_jwt and not public_key_file_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | jwt | Get AdServer's public key"
+  ansible.builtin.copy:
+    src: "{{ vendor_dir }}/adserver/config/jwt/public.pem"
+    dest: "{{ service_dir }}/config/jwt/public.pem"
+    remote_src: yes
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+  when: copy_jwt

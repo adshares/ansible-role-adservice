@@ -1,0 +1,34 @@
+---
+## Update
+- name: "{{ service_name }} | deploy | update | Copy service dir into new version {{ deploy_dir }}"
+  ansible.builtin.synchronize:
+    src: "{{ service_dir }}/"
+    dest: "{{ deploy_dir }}"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: "{{ service_name }} | deploy | update | Purge"
+  file:
+    path: "{{ purge_dir }}"
+    state: absent
+  with_items:
+    - "{{ deploy_dir }}/vendors"
+    - "{{ deploy_dir }}/node_modules"
+  loop_control:
+    loop_var: purge_dir
+  when: deploy_purge|bool
+
+- name: "{{ service_name }} | deploy | update | Git update {{ repo_url }}"
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ deploy_dir }}"
+    version: "{{ repo_version }}"
+    force: yes
+  become_user: "{{ service_user }}"
+
+- name: "{{ service_name }} | deploy | update | Get service git version"
+  ansible.builtin.command: "git -C {{ deploy_dir }} describe --tags --always"
+  register: cmd
+  become_user: "{{ service_user }}"
+
+- name: "{{ service_name }} | deploy | update | Read service git version"
+  set_fact: git_version="{{ cmd.stdout }}"

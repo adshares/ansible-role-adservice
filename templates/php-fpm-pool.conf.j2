@@ -1,0 +1,14 @@
+[{{ service_name }}]
+user = {{ service_user }}
+group = {{ server_user }}
+listen = /var/run/{{ service_user }}-{{ service_name }}-php-fpm.sock
+listen.owner = {{ service_user }}
+listen.group = {{ server_user }}
+listen.mode = 0660
+
+pm = static
+pm.max_children = 150
+pm.start_servers = 50
+pm.min_spare_servers = 25
+pm.max_spare_servers = 50
+pm.max_requests = 10000

@@ -1,0 +1,3 @@
+server_host: localhost
+server_port: 8012
+php_pool: true

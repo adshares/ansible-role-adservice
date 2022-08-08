@@ -1,0 +1,23 @@
+---
+- name: "{{ service_name }} | setup | cron | add ops:update"
+  cron:
+    name: "{{ service_name }} | ops:update"
+    minute: "10"
+    job: "php {{ service_dir }}/bin/console ops:update"
+  become_user: "{{ service_user }}"
+  become: true
+
+- name: "{{ service_name }} | setup | cron | add ops:users:merge"
+  cron:
+    name: "{{ service_name }} | ops:users:merge"
+    minute: "*/3"
+    job: "php {{ service_dir }}/bin/console ops:users:merge"
+  become_user: "{{ service_user }}"
+  become: true
+
+- name: "{{ service_name }} | setup | cron | add ops:cookie3:update"
+  cron:
+    name: "{{ service_name }} | ops:cookie3:update"
+    job: "php {{ service_dir }}/bin/console ops:cookie3:update"
+  become_user: "{{ service_user }}"
+  become: true

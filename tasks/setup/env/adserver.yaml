@@ -1,0 +1,103 @@
+---
+- name: "{{ service_name }} | setup | env | Generate app key"
+  ansible.builtin.shell: openssl rand -base64 32
+  register: cmd
+
+- name: "{{ service_name }} | setup | env | Set app key"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_KEY='
+    line: "APP_KEY=base64:{{ cmd.stdout }}"
+
+- name: "{{ service_name }} | setup | env | Generate app id"
+  ansible.builtin.shell: "echo {{ adserver_prefix }}.{{ server_domain }} | sha256sum | head -c 16"
+  register: cmd
+
+- name: "{{ service_name }} | setup | env | Set app id"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_ID='
+    line: "APP_ID={{ cmd.stdout }}"
+
+- name: "{{ service_name }} | setup | env | Set app name"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_NAME='
+    line: "APP_NAME=\"{{ server_name }}\""
+
+- name: "{{ service_name }} | setup | env | Set server port"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_PORT='
+    line: "APP_PORT={{ service_port | default(server_port) }}"
+
+- name: "{{ service_name }} | setup | env | Set server port"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_HOST='
+    line: "APP_HOST={{ server_host }}"
+
+- name: "{{ service_name }} | setup | env | Set server setup in progress"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_SETUP='
+    line: "APP_SETUP=1"
+
+- name: "{{ service_name }} | setup | env | Set AdServer URL"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^APP_URL='
+    line: "APP_URL=https://{{ adserver_prefix }}.{{ server_domain }}"
+
+# Database
+- name: "{{ service_name }} | setup | env | Set database username"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DB_USERNAME='
+    line: "DB_USERNAME={{ service_user }}"
+
+- name: "{{ service_name }} | setup | env | Set database password"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DB_PASSWORD='
+    line: "DB_PASSWORD={{ service_user }}"
+
+- name: "{{ service_name }} | setup | env | Set database name"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^DB_DATABASE='
+    line: "DB_DATABASE={{ service_user }}_{{ service_name | replace('-', '_') }}"
+
+# Log
+- name: "{{ service_name }} | setup | env | Set log path"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^LOG_FILE_PATH='
+    line: "LOG_FILE_PATH={{ log_dir }}/{{ service_name }}.log"
+
+# AdPanel
+- name: "{{ service_name }} | setup | env | Set AdPanel URL"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADPANEL_URL='
+    line: "ADPANEL_URL=https://{{ adpanel_prefix }}.{{ server_domain }}"
+
+# AdUser
+- name: "{{ service_name }} | setup | env | Set AdUser URL"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADUSER_BASE_URL='
+    line: "ADUSER_BASE_URL=https://{{ aduser_prefix }}.{{ server_domain }}"
+
+- name: "{{ service_name }} | setup | env | Set internal AdUser URL"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADUSER_INTERNAL_URL='
+    line: "ADUSER_INTERNAL_URL=http://{{ aduser_prefix }}.{{ server_domain }}"
+
+# Wallet
+- name: "{{ service_name }} | setup | env | Set wallet workdir"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADSHARES_WORKINGDIR='
+    line: "ADSHARES_WORKINGDIR={{ service_dir }}/storage/wallet"

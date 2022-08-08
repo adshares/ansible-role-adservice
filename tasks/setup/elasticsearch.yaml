@@ -1,0 +1,21 @@
+---
+- name: "{{ service_name }} | setup | elastic | Add Elasticsearch key"
+  ansible.builtin.apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+  when: "'elasticsearch' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | elastic | Add Elasticsearch repository"
+  ansible.builtin.apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+  when: "'elasticsearch' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | elastic | Install Elasticsearch"
+  ansible.builtin.apt:
+    name: elasticsearch
+    update_cache: true
+  when: "'elasticsearch' not in ansible_facts.packages"
+
+- name: "{{ service_name }} | setup | elastic | Start Elasticsearch"
+  ansible.builtin.service:
+    name: elasticsearch
+    state: started

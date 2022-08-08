@@ -1,0 +1,70 @@
+---
+- name: "{{ service_name }} | setup | Installing"
+  ansible.builtin.debug:
+    msg: "Installing {{ service_name }} on {{ service_user }}@{{ ansible_host }}"
+
+- name: "{{ service_name }} | setup | Gather the package facts"
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: "{{ service_name }} | setup | Install basic packages"
+  ansible.builtin.apt:
+    name: [ 'software-properties-common', 'git', 'curl', 'gnupg2', 'apt-transport-https', 'cron', 'sshpass', 'unzip' ]
+
+- name: "{{ service_name }} | setup | Add user '{{ service_user }}'"
+  user:
+    name: "{{ service_user }}"
+    comment: Service user
+    shell: /usr/sbin/nologin
+
+- name: "{{ service_name }} | setup | Create log dir"
+  ansible.builtin.file:
+    path: "{{ log_dir }}"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0777'
+
+- name: "{{ service_name }} | setup | Setup ADS"
+  include_tasks: setup/ads.yaml
+  when: setup_ads
+
+- name: "{{ service_name }} | setup | Setup PHP"
+  include_tasks: setup/php.yaml
+  when: setup_php
+
+- name: "{{ service_name }} | setup | Setup Node"
+  include_tasks: setup/node.yaml
+  when: setup_node
+
+- name: "{{ service_name }} | setup | Setup Mysql"
+  include_tasks: setup/mysql.yaml
+  when: setup_mysql
+
+- name: "{{ service_name }} | setup | Setup ElasticSearch"
+  include_tasks: setup/elasticsearch.yaml
+  when: setup_elastic
+
+- name: "{{ service_name }} | setup | Setup Nginx"
+  include_tasks: setup/nginx.yaml
+  when: setup_nginx
+
+- name: "{{ service_name }} | setup | Setup Certbot"
+  include_tasks: setup/certbot.yaml
+  when: setup_certbot
+
+- name: "{{ service_name }} | setup | Setup wkhtmltopdf"
+  include_tasks: setup/wkhtmltopdf.yaml
+  when: setup_wkhtmltopdf
+
+- name: "{{ service_name }} | setup | Setup cron"
+  include_tasks: setup/cron.yaml
+
+- name: "{{ service_name }} | setup | Setup supervisor"
+  include_tasks: setup/supervisor.yaml
+
+- name: "{{ service_name }} | setup | Setup logrotate"
+  include_tasks: setup/logrotate.yaml
+
+- name: "{{ service_name }} | setup | Setup cleaner"
+  include_tasks: setup/cleaner.yaml

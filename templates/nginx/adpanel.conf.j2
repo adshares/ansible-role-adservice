@@ -1,0 +1,41 @@
+server {
+    listen {{ server_port }};
+    server_name {{ server_host }} {{ server_prefix }}*;
+
+    error_log {{ log_dir }}/{{ service_name }}-nginx-error.log;
+    access_log /dev/null;
+
+    root /opt/{{ service_user }}/{{ service_name }}/dist;
+    index index.html;
+
+    location /preview {
+        try_files /preview.html$is_args$args =404;
+    }
+
+    location @no_acp {
+        return 307 /404;
+    }
+
+    location /acp/ {
+        error_page 502 = @no_acp;
+        proxy_pass http://localhost:{{ adcontroller_server_port }}/;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html$is_args$args;
+    }
+
+    location ~ ^/\. {
+        return 404;
+    }
+
+    location /favicon  {
+        log_not_found off;
+    }
+
+    {% if server_host != 'localhost' %}
+    listen 443 ssl;
+    ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+    {% endif %}
+}

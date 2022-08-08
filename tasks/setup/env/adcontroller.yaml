@@ -1,0 +1,15 @@
+---
+- name: "{{ service_name }} | setup | env | Include default config"
+  include_tasks: "{{ role_path }}/tasks/setup/env/main.yaml"
+
+- name: "{{ service_name }} | setup | env | Set AdServer's base URI"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^ADSERVER_BASE_URI='
+    line: "ADSERVER_BASE_URI=\"http://{{ adserver_prefix }}.{{ server_domain }}\""
+
+- name: "{{ service_name }} | setup | env | Set web application public URL (serve path)"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^PUBLIC_URL='
+    line: "PUBLIC_URL=\"{{ adcontroller_public_url }}\""

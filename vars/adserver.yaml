@@ -1,0 +1,17 @@
+setup_ads: true
+setup_node: true
+setup_certbot: true
+setup_wkhtmltopdf: true
+server_add_host: true
+server_prefix: "{{ adserver_prefix }}."
+service_env: production
+service_env_file_dist: .env.dist
+service_env_file_local: .env
+service_copy_env_file: True
+create_jwt: true
+deploy_refresh: "{{ service_dir }}/artisan --no-interaction optimize"
+deploy_clear: ~
+deploy_services:
+  - "php{{ php_version }}-fpm"
+  - supervisor
+php_pool: true

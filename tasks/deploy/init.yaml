@@ -1,0 +1,67 @@
+---
+## Init
+- name: "{{ service_name }} | deploy | init | Ensure vendor dir exists"
+  ansible.builtin.file:
+    path: "{{ vendor_dir }}"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0755'
+
+### crate project folder
+- name: "{{ service_name }} | deploy | init | Git checkout {{ repo_url }}"
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ service_dir }}-init"
+    version: "{{ repo_version }}"
+  become_user: "{{ service_user }}"
+  when: not service_dir_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | init | Change init repo owner"
+  ansible.builtin.file:
+    path: "{{ service_dir }}-init"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    recurse: yes
+  when: not service_dir_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | init | Check .env file"
+  ansible.builtin.set_fact:
+    create_env_file: true
+  when: service_env_file_dist != None and service_env_file_dist != False and service_env_file_dist|length > 0 and not service_dir_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | init | Copy {{ service_env_file_dist }} file"
+  ansible.builtin.copy:
+    src: "{{ service_dir }}-init/{{ service_env_file_dist }}"
+    dest: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    remote_src: yes
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+  when: create_env_file and service_copy_env_file
+
+- name: "{{ service_name }} | deploy | init | Create {{ service_env_file_local }} file"
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    force: no
+  when: create_env_file and not service_copy_env_file
+
+- name: "{{ service_name }} | deploy | init | Setup {{ service_env_file_local }} file"
+  include_tasks: setup/env.yaml
+  when: create_env_file
+
+- name: "{{ service_name }} | deploy | init | Init service dir {{ service_dir }}"
+  ansible.builtin.file:
+    src: "{{ service_dir }}-init"
+    dest: "{{ service_dir }}"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    state: link
+  when: not service_dir_stat.stat.exists
+
+- name: "{{ service_name }} | deploy | init | Change service dir into symbolic link {{ service_dir }} -> {{ service_dir }}-init"
+  ansible.builtin.shell: "mv {{ service_dir }} {{ service_dir }}-init && ln -s {{ service_dir }}-init {{ service_dir }}"
+  when: service_dir_stat.stat.exists and service_dir_stat.stat.isdir
+

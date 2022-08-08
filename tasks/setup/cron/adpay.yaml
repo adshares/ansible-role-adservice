@@ -1,0 +1,17 @@
+---
+- name: "{{ service_name }} | setup | cron | add ops:payments:calculate"
+  cron:
+    name: "{{ service_name }} | ops:payments:calculate"
+    minute: "10-15,*/5"
+    job: "php {{ service_dir }}/bin/console ops:payments:calculate"
+  become_user: "{{ service_user }}"
+  become: true
+
+- name: "{{ service_name }} | setup | cron | add ops:history:clear"
+  cron:
+    name: "{{ service_name }} | ops:history:clear"
+    minute: "10"
+    hour: "*/1"
+    job: "php {{ service_dir }}/bin/console ops:history:clear"
+  become_user: "{{ service_user }}"
+  become: true

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source {{ service_dir }}/.env
+
+db_name=${DB_DATABASE}
+db_credentials="--user=${DB_USERNAME} --password=${DB_PASSWORD}"
+vendor=`echo -n ${APP_NAME} | sed -e 's/\(.*\)/\L\1/;s/\s\+/_/g'`
+
+echo "$(date +'%F %T') Removing event logs older than {{ cleaner_logs_interval }} hours"
+mysql ${db_credentials} -sN -e "CALL clean_logs(NOW() - INTERVAL {{ cleaner_logs_interval }} HOUR)" "${db_name}"
+
+echo "$(date +'%F %T') Removing network event logs older than {{ cleaner_logs_interval }} hours"
+mysql ${db_credentials} -sN -e "CALL clean_network_logs(NOW() - INTERVAL {{ cleaner_logs_interval }} HOUR)" "${db_name}"
+
+echo "$(date +'%F %T') Done"

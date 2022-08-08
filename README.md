@@ -20,26 +20,108 @@ Installs and configures the Adshares adserver with all necessary modules.
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Domain with 3 subdomains for AdServer, AdPanel and AdUser (default `app.`, `panel.` and `au.`) directed to the server.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+    service_name
+
+**Required**. Available services: `adserver`, `adpanel`, `adselect`, `aduser`, `adpay`, `adcontroller`.
+
+    setup: false
+
+Enables installation and configuration of libraries and packages necessary for the service.
+
+    deploy: false
+
+Enables the deployment or update of the service.
+
+    server_domain: localhost
+
+Domain of publicly available services (AdServer, AdPanel, AdController, AdUser) - e.g. *example.com*
+
+    adserver_prefix: app
+
+AdServer module domain prefix (subdomain) - e.g. *app.example.com*
+
+    adpanel_prefix: panel
+
+AdPanel module domain prefix (subdomain) - e.g. *panel.example.com*
+
+    aduser_prefix: au
+
+AdUser module domain prefix (subdomain) - e.g. *au.example.com*
+
+    tech_email: "tech@{{ server_domain }}"
+
+AdUser module domain prefix (subdomain) - e.g. *tech@example.com*
+
+    support_email: "support@{{ server_domain }}"
+
+AdUser module domain prefix (subdomain) - e.g. *support@example.com*
+
+    vendor_dir: /opt/adshares
+
+Service installation folder.
+
+    log_dir: /var/log/adshares
+
+Service logs folder.
+
+    service_user: adshares
+
+Service installation username.
+
+    clean_after_days: 7
+
+The period of keeping old version files.
+
+    repo_version: master
+
+Service code version.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- [nickhammond.logrotate](https://github.com/nickhammond/ansible-logrotate)
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Installing all modules:
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+        - role: adservice
+          vars:
+            service_name: "{{ item }}"
+            server_domain: example.com
+            setup: true
+            deploy: true
+          loop:
+            - adserver
+            - adpanel
+            - adselect
+            - aduser
+            - adpay
+            - adcontroller
+
+Updating all modules:
+
+    - hosts: servers
+      roles:
+        - role: adservice
+          vars:
+            service_name: "{{ item }}"
+            deploy: true
+          loop:
+            - adserver
+            - adpanel
+            - adselect
+            - aduser
+            - adpay
+            - adcontroller
 
 License
 -------
@@ -60,4 +142,7 @@ If not, see <https://www.gnu.org/licenses/gpl.html>.
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+* **[Maciej Pilarczyk](https://github.com/m-pilarczyk)** - _Programmer_
+* **[Paweł Podkalicki](https://github.com/PawelPodkalicki)** - _Programmer_
+
+See also the list of [contributors](https://github.com/adshares/aduser/contributors) who participated in this project.
