@@ -1,5 +1,5 @@
 ---
-## Update
+# Update
 - name: "{{ service_name }} | deploy | update | Copy service dir into new version {{ deploy_dir }}"
   ansible.builtin.synchronize:
     src: "{{ service_dir }}/"

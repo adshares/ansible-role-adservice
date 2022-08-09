@@ -98,7 +98,7 @@
   ansible.builtin.cron:
     name: "{{ service_name }} | ops:supply:payments:process"
     minute: "1-59/12"
-    job: "php {{ service_dir }}/artisan ops:supply:payments:process > /dev/null && php {{ service_dir }}/artisan ops:adselect:case-payments:export > /dev/null  && php {{ service_dir }}/artisan ops:wallet:withdrawal:check > /dev/null && php {{ service_dir }}/artisan ops:stats:aggregate:publisher > /dev/null" # noqa yaml[line-length]
+    job: "php {{ service_dir }}/artisan ops:supply:payments:process > /dev/null && php {{ service_dir }}/artisan ops:adselect:case-payments:export > /dev/null  && php {{ service_dir }}/artisan ops:wallet:withdrawal:check > /dev/null && php {{ service_dir }}/artisan ops:stats:aggregate:publisher > /dev/null" # noqa yaml[line-length] line-length
   become_user: "{{ service_user }}"
   become: true
 

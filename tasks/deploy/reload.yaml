@@ -1,5 +1,5 @@
 ---
-## Reload
+# Reload
 - name: "{{ service_name }} | deploy | reload | Start maintenance"
   ansible.builtin.lineinfile:
     path: "{{ deploy_dir }}/{{ service_env_file_local }}"

@@ -1,5 +1,5 @@
 ---
-## Clean
+# Clean
 - name: "{{ service_name }} | deploy | clean | Checking service dir {{ service_dir }}"
   ansible.builtin.stat:
     path: "{{ service_dir }}"

@@ -1,5 +1,5 @@
 ---
-## Storage
+# Storage
 - name: "{{ service_name }} | deploy | storage | Ensure storage exists"
   ansible.builtin.file:
     path: "{{ storage_dir }}"

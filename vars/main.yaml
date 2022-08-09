@@ -1,5 +1,5 @@
 ---
-## Setup
+# Setup
 setup_ads: false
 setup_elastic: false
 setup_mysql: true
@@ -9,20 +9,20 @@ setup_php: true
 setup_certbot: false
 setup_wkhtmltopdf: false
 
-## Configuration
+# Configuration
 adcontroller_public_url: "/acp"
 adcontroller_server_port: 8030
 php_version: 8.1
 php_pool: false
 
-## Server
+# Server
 server_user: www-data
 server_prefix: ~
 server_host: "{{ server_prefix }}{{ server_domain }}"
 server_port: 80
 server_add_host: false
 
-## Service
+# Service
 service_dir: "{{ vendor_dir }}/{{ service_name }}"
 service_env: prod
 service_env_file_dist: .env
@@ -30,15 +30,15 @@ service_env_file_local: .env.local
 service_copy_env_file: false
 service_storage_dir: "{{ service_dir }}/var"
 
-## Storage
+# Storage
 storage_dir_name: .storage
 storage_dir: "{{ vendor_dir }}/{{ storage_dir_name }}"
 storage_service_dir: "{{ storage_dir }}/{{ storage_dir_name }}/{{ service_name }}"
 
-## Repository
+# Repository
 repo_url: "https://github.com/adshares/{{ service_name }}.git"
 
-## Deploy
+# Deploy
 copy_jwt: false
 create_jwt: false
 deploy_version: "{{ ansible_date_time.iso8601_basic_short }}"
@@ -49,5 +49,5 @@ deploy_purge: false
 deploy_services:
   - "php{{ php_version }}-fpm"
 
-## Cleaner
+# Cleaner
 cleaner_logs_interval: 168
