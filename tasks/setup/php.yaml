@@ -60,10 +60,8 @@
     path: /usr/local/bin/composer
   register: composer_stat
 
-- name: "{{ service_name }} | setup | php | Download and install Composer"
-  ansible.builtin.shell: |
-    set -o pipefail
-    curl -sS https://getcomposer.org/installer | php
+- name: "{{ service_name }} | setup | php | Download and install Composer" # noqa risky-shell-pipe
+  ansible.builtin.shell: curl -sS https://getcomposer.org/installer | php
   args:
     chdir: /usr/src/
     creates: /usr/local/bin/composer

@@ -10,10 +10,8 @@
     regexp: '^APP_KEY='
     line: "APP_KEY=base64:{{ cmd.stdout }}"
 
-- name: "{{ service_name }} | setup | env | Generate app id"
-  ansible.builtin.shell: |
-    set -o pipefail
-    echo {{ adserver_prefix }}.{{ server_domain }} | sha256sum | head -c 16
+- name: "{{ service_name }} | setup | env | Generate app id" # noqa risky-shell-pipe
+  ansible.builtin.shell: echo {{ adserver_prefix }}.{{ server_domain }} | sha256sum | head -c 16
   register: cmd
   changed_when: false
 
