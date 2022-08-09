@@ -6,7 +6,7 @@
   when: create_jwt
 
 - name: "{{ service_name }} | deploy | jwt | Generate private key"
-  ansible.builtin.shell: "openssl genrsa -out {{ service_dir }}/config/jwt/private.pem 2048"
+  ansible.builtin.command: "openssl genrsa -out {{ service_dir }}/config/jwt/private.pem 2048"
   become: true
   become_user: "{{ service_user }}"
   when: create_jwt and not private_key_file_stat.stat.exists
@@ -18,7 +18,7 @@
   when: create_jwt
 
 - name: "{{ service_name }} | deploy | jwt | Generate public key"
-  ansible.builtin.shell: "openssl rsa -pubout -in {{ service_dir }}/config/jwt/private.pem -out {{ service_dir }}/config/jwt/public.pem"
+  ansible.builtin.command: "openssl rsa -pubout -in {{ service_dir }}/config/jwt/private.pem -out {{ service_dir }}/config/jwt/public.pem"
   become: true
   become_user: "{{ service_user }}"
   when: create_jwt and not public_key_file_stat.stat.exists
@@ -27,7 +27,8 @@
   ansible.builtin.copy:
     src: "{{ vendor_dir }}/adserver/config/jwt/public.pem"
     dest: "{{ service_dir }}/config/jwt/public.pem"
-    remote_src: yes
+    remote_src: true
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
+    mode: "0644"
   when: copy_jwt

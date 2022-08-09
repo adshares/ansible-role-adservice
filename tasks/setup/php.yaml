@@ -30,8 +30,7 @@
       - "{{ php_package }}-apcu"
       - "{{ php_package }}-imagick"
       - "{{ php_package }}-gmp"
-#  when: php_version is match("7.*")
--
+
 - name: "{{ service_name }} | setup | php | Config PHP execution time"
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/cli/php.ini"
@@ -48,6 +47,7 @@
   ansible.builtin.template:
     src: php-fpm-pool.conf.j2
     dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ service_user }}-{{ service_name }}-fpm-pool.conf"
+    mode: "0644"
   when: php_pool
 
 - name: "{{ service_name }} | setup | php | Restart PHP-FPM"
@@ -61,7 +61,9 @@
   register: composer_stat
 
 - name: "{{ service_name }} | setup | php | Download and install Composer"
-  ansible.builtin.shell: curl -sS https://getcomposer.org/installer | php
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -sS https://getcomposer.org/installer | php
   args:
     chdir: /usr/src/
     creates: /usr/local/bin/composer
@@ -75,5 +77,5 @@
     mode: '0755'
     owner: root
     src: /usr/src/composer.phar
-    remote_src: yes
+    remote_src: true
   when: not composer_stat.stat.exists

@@ -1,9 +1,9 @@
 - name: "{{ service_name }} | config | Reset config"
-  include_vars:
+  ansible.builtin.include_vars:
     file: "../vars/main.yaml"
 
 - name: "{{ service_name }} | config | Load config"
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - files: ["{{ service_name }}.yaml"]
       skip: true

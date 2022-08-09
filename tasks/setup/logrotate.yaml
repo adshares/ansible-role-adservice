@@ -3,14 +3,15 @@
   ansible.builtin.file:
     path: "{{ log_dir }}"
     state: directory
+    mode: "0755"
 
-- name: "{{ service_name }} | setup | logrotate | Change log storage dir owner"
-  ansible.builtin.shell: "chown -h {{ service_user }}:{{ service_user }} {{ log_dir }}"
+- name: "{{ service_name }} | setup | logrotate | Change log storage dir owner" # noqa no-changed-when
+  ansible.builtin.command: "chown -h {{ service_user }}:{{ service_user }} {{ log_dir }}"
   args:
-    warn: False
+    warn: false
 
 - name: "adservice : {{ service_name }} | setup | logrotate | Install logrotate"
-  include_role:
+  ansible.builtin.include_role:
     name: nickhammond.logrotate
   vars:
     # full explanation of options can be found here:

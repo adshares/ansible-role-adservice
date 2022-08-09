@@ -9,10 +9,10 @@
 
 - name: "{{ service_name }} | setup | Install basic packages"
   ansible.builtin.apt:
-    name: [ 'software-properties-common', 'git', 'curl', 'gnupg2', 'apt-transport-https', 'cron', 'sshpass', 'unzip' ]
+    name: ['software-properties-common', 'git', 'curl', 'gnupg2', 'apt-transport-https', 'cron', 'sshpass', 'unzip']
 
 - name: "{{ service_name }} | setup | Add user '{{ service_user }}'"
-  user:
+  ansible.builtin.user:
     name: "{{ service_user }}"
     comment: Service user
     shell: /usr/sbin/nologin

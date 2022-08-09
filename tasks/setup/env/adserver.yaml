@@ -1,7 +1,8 @@
 ---
 - name: "{{ service_name }} | setup | env | Generate app key"
-  ansible.builtin.shell: openssl rand -base64 32
+  ansible.builtin.command: openssl rand -base64 32
   register: cmd
+  changed_when: false
 
 - name: "{{ service_name }} | setup | env | Set app key"
   ansible.builtin.lineinfile:
@@ -10,8 +11,11 @@
     line: "APP_KEY=base64:{{ cmd.stdout }}"
 
 - name: "{{ service_name }} | setup | env | Generate app id"
-  ansible.builtin.shell: "echo {{ adserver_prefix }}.{{ server_domain }} | sha256sum | head -c 16"
+  ansible.builtin.shell: |
+    set -o pipefail
+    echo {{ adserver_prefix }}.{{ server_domain }} | sha256sum | head -c 16
   register: cmd
+  changed_when: false
 
 - name: "{{ service_name }} | setup | env | Set app id"
   ansible.builtin.lineinfile:

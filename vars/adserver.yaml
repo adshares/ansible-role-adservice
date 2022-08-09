@@ -7,7 +7,7 @@ server_prefix: "{{ adserver_prefix }}."
 service_env: production
 service_env_file_dist: .env.dist
 service_env_file_local: .env
-service_copy_env_file: True
+service_copy_env_file: true
 create_jwt: true
 deploy_refresh: "{{ service_dir }}/artisan --no-interaction optimize"
 deploy_clear: ~

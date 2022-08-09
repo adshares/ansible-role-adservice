@@ -9,8 +9,9 @@
   ansible.builtin.pip:
     name: [certbot, certbot-nginx]
 
-- name: "{{ service_name }} | setup | certbot | Generate SSL certificate"
-  ansible.builtin.shell: "sudo certbot --nginx --agree-tos --preferred-challenges http --email {{ tech_email }} -d {{ server_host }} --non-interactive --redirect"
+- name: "{{ service_name }} | setup | certbot | Generate SSL certificate" # noqa no-changed-when
+  ansible.builtin.command: |
+    sudo certbot --nginx --agree-tos --preferred-challenges http --email {{ tech_email }} -d {{ server_host }} --non-interactive --redirect
 
 - name: "{{ service_name }} | setup | certbot | Restart Nginx"
   ansible.builtin.service:

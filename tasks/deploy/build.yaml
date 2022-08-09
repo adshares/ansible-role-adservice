@@ -1,29 +1,28 @@
 ---
 ## Build
-#TODO .env update
 - name: "{{ service_name }} | deploy | build | Ensure {{ deploy_dir }}/{{ service_env_file_local }} exists"
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: "{{ deploy_dir }}/{{ service_env_file_local }}"
-    force: no
+    force: false
     group: "{{ service_user }}"
     owner: "{{ service_user }}"
     mode: 0644
-  when: service_env_file_local != None and service_env_file_local != False and service_env_file_local|length > 0
+  when: service_env_file_local != None and service_env_file_local and service_env_file_local|length > 0
 
 - name: "{{ service_name }} | deploy | build | Setting service env {{ service_env }}"
   ansible.builtin.lineinfile:
     path: "{{ deploy_dir }}/{{ service_env_file_local }}"
     regexp: '^APP_ENV='
     line: "APP_ENV={{ service_env }}"
-  when: service_env_file_local != None and service_env_file_local != False and service_env_file_local|length > 0
+  when: service_env_file_local != None and service_env_file_local and service_env_file_local|length > 0
 
 - name: "{{ service_name }} | deploy | build | Setting git version {{ git_version }}"
   ansible.builtin.lineinfile:
     path: "{{ deploy_dir }}/{{ service_env_file_local }}"
     regexp: '^APP_VERSION='
     line: "APP_VERSION={{ git_version }}"
-  when: service_env_file_local != None and service_env_file_local != False and service_env_file_local|length > 0
+  when: service_env_file_local != None and service_env_file_local and service_env_file_local|length > 0
 
 - name: "{{ service_name }} | deploy | build | Checking build script"
   ansible.builtin.stat:
@@ -31,6 +30,6 @@
   register: build_script_stat
 
 - name: "{{ service_name }} | deploy | build | Build service {{ git_version }}"
-  ansible.builtin.shell: "{{ deploy_dir }}/deploy/build.sh {{ deploy_dir }}"
+  ansible.builtin.command: "{{ deploy_dir }}/deploy/build.sh {{ deploy_dir }}"
   become_user: "{{ service_user }}"
   when: build_script_stat.stat.exists

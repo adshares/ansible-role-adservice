@@ -1,6 +1,6 @@
 ---
 - name: "{{ service_name }} | setup | cron | add build preview"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | build preview"
     minute: "*/5"
     job: "{{ service_dir }}/bin/build-preview-html.sh &> /dev/null"
@@ -8,7 +8,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add replace index"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | replace index"
     minute: "59"
     job: "{{ service_dir }}/bin/replace-index-with-preview.sh &> /dev/null"

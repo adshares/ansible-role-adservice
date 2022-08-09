@@ -36,7 +36,7 @@ storage_dir: "{{ vendor_dir }}/{{ storage_dir_name }}"
 storage_service_dir: "{{ storage_dir }}/{{ storage_dir_name }}/{{ service_name }}"
 
 ## Repository
-repo_url: "https://github.com/adshares/{{service_name}}.git"
+repo_url: "https://github.com/adshares/{{ service_name }}.git"
 
 ## Deploy
 copy_jwt: false

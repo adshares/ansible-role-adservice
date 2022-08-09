@@ -8,7 +8,7 @@
   ansible.builtin.user:
     name: "{{ server_user }}"
     groups: "{{ service_user }}"
-    append: yes
+    append: true
 
 - name: "{{ service_name }} | setup | nginx | Checking certs"
   ansible.builtin.stat:
@@ -16,7 +16,9 @@
   register: certs_file_stat
 
 - name: "{{ service_name }} | setup | nginx | Generate certs"
-  ansible.builtin.shell: sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/" -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+  ansible.builtin.command: |
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/" \
+    -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
   when: not certs_file_stat.stat.exists
 
 - name: "{{ service_name }} | setup | nginx | Remove default config"
@@ -54,6 +56,7 @@
   ansible.builtin.template:
     src: "{{ nginx_config_file }}"
     dest: "/etc/nginx/sites-available/{{ service_user }}-{{ service_name }}"
+    mode: "0644"
 
 - name: "{{ service_name }} | setup | nginx | Enable service"
   ansible.builtin.file:
@@ -67,10 +70,9 @@
     state: restarted
 
 - name: "{{ service_name }} | setup | nginx | Update the /etc/hosts file with service host"
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/etc/hosts"
-    regexp: "127.0.0.1\t{{ server_prefix }}.*"
-    line: "127.0.0.1\t{{ server_host }}"
+    regexp: "127.0.0.1\t{{ server_prefix }}.*" # noqa no-tabs
+    line: "127.0.0.1\t{{ server_host }}" # noqa no-tabs
     state: present
   when: server_add_host
-

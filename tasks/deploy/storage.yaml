@@ -22,10 +22,14 @@
   ansible.builtin.file:
     path: "{{ storage_dir }}/{{ service_name }}"
     state: directory
+    mode: "0755"
   when: not storage_dir_stat.stat.exists and not service_storage_dir_stat.stat.exists
 
 - name: "{{ service_name }} | deploy | storage | Copy service storage dir {{ service_storage_dir }}"
-  ansible.builtin.shell: "cp -r {{ service_storage_dir }}/* {{ storage_dir }}/{{ service_name }}/ && rm -rf {{ service_storage_dir }} && ln -s {{ storage_dir }} {{ service_storage_dir }}"
+  ansible.builtin.shell: |
+    cp -r {{ service_storage_dir }}/* {{ storage_dir }}/{{ service_name }}/ \
+    && rm -rf {{ service_storage_dir }} \
+    && ln -s {{ storage_dir }} {{ service_storage_dir }}
   when: storage_dir_stat.stat.exists and service_storage_dir_stat.stat.exists and service_storage_dir_stat.stat.isdir
 
 - name: "{{ service_name }} | deploy | storage | Move service storage dir {{ service_storage_dir }}"
@@ -41,7 +45,7 @@
     state: link
 
 - name: "{{ service_name }} | deploy | storage | Change service storage dir owner"
-  ansible.builtin.shell: "chown -h {{ service_user }}:{{ service_user }} {{ service_storage_dir }}"
+  ansible.builtin.command: "chown -h {{ service_user }}:{{ service_user }} {{ service_storage_dir }}"
   args:
-    warn: False
+    warn: false
   when: not service_storage_dir_stat.stat.exists or service_storage_dir_stat.stat.isdir

@@ -14,11 +14,11 @@
       - "{{ current_service_dir_stat.stat.lnk_source | basename }}"
     file_type: directory
     age: "{{ clean_after_days }}d"
-    recurse: no
-  register: versionsToClean
+    recurse: false
+  register: versions_to_clean
 
 - name: "{{ service_name }} | deploy | clean | Remove versions older than {{ clean_after_days }} days"
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
-  with_items: "{{ versionsToClean.files }}"
+  with_items: "{{ versions_to_clean.files }}"

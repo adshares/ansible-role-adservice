@@ -1,6 +1,6 @@
 ---
 - name: "{{ service_name }} | setup | cron | add ops:targeting-options:update"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:targeting-options:update"
     minute: "12"
     job: "php {{ service_dir }}/artisan ops:targeting-options:update"
@@ -8,7 +8,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:filtering-options:update"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:filtering-options:update"
     minute: "12"
     job: "php {{ service_dir }}/artisan ops:filtering-options:update"
@@ -16,7 +16,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:statistics:backup"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:statistics:backup"
     minute: "11"
     hour: "2"
@@ -25,7 +25,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add delete old reports"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | delete old reports"
     minute: "10"
     hour: "2"
@@ -34,7 +34,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:exchange-rate:fetch"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:exchange-rate:fetch"
     minute: "0-5,10"
     job: "php {{ service_dir }}/artisan ops:exchange-rate:fetch"
@@ -42,7 +42,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:demand:inventory:import"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:demand:inventory:import"
     minute: "*/10"
     job: "php {{ service_dir }}/artisan ops:demand:inventory:import >/dev/null && php {{ service_dir }}/artisan ops:adselect:inventory:export >/dev/null"
@@ -50,28 +50,28 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:adselect:case:export"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:adselect:case:export"
     job: "php {{ service_dir }}/artisan ops:adselect:case:export >/dev/null"
   become_user: "{{ service_user }}"
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:adpay:campaign:export"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:adpay:campaign:export"
     job: "php {{ service_dir }}/artisan ops:adpay:campaign:export >/dev/null && php {{ service_dir }}/artisan ops:adpay:event:export -t 6 2>&1"
   become_user: "{{ service_user }}"
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:expired-withdrawal:cancel"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:expired-withdrawal:cancel"
     job: "php {{ service_dir }}/artisan ops:expired-withdrawal:cancel >/dev/null"
   become_user: "{{ service_user }}"
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:demand:payments:process"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:demand:payments:process"
     minute: "15-20,25-59/5"
     job: "php {{ service_dir }}/artisan ops:demand:payments:process > /dev/null"
@@ -79,7 +79,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:demand:payments:block"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:demand:payments:block"
     minute: "59"
     job: "php {{ service_dir }}/artisan ops:demand:payments:block"
@@ -87,7 +87,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ads:process-tx"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ads:process-tx"
     minute: "1-59/5"
     job: "php {{ service_dir }}/artisan ads:process-tx > /dev/null"
@@ -95,15 +95,15 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:supply:payments:process"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:supply:payments:process"
     minute: "1-59/12"
-    job: "php {{ service_dir }}/artisan ops:supply:payments:process > /dev/null && php {{ service_dir }}/artisan ops:adselect:case-payments:export > /dev/null  && php {{ service_dir }}/artisan ops:wallet:withdrawal:check > /dev/null && php {{ service_dir }}/artisan ops:stats:aggregate:publisher > /dev/null"
+    job: "php {{ service_dir }}/artisan ops:supply:payments:process > /dev/null && php {{ service_dir }}/artisan ops:adselect:case-payments:export > /dev/null  && php {{ service_dir }}/artisan ops:wallet:withdrawal:check > /dev/null && php {{ service_dir }}/artisan ops:stats:aggregate:publisher > /dev/null" # noqa yaml[line-length]
   become_user: "{{ service_user }}"
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:demand:classification:request"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:demand:classification:request"
     minute: "*/5"
     job: "php {{ service_dir }}/artisan ops:demand:classification:request"
@@ -111,7 +111,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:supply:site-rank:update"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:supply:site-rank:update"
     minute: "0-45/5,55"
     job: "php {{ service_dir }}/artisan ops:supply:site-rank:update"
@@ -119,7 +119,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:supply:site-rank:update all"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:supply:site-rank:update"
     minute: "50"
     job: "php {{ service_dir }}/artisan ops:supply:site-rank:update --all"
@@ -127,7 +127,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:supply:site-rank:reassess"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:supply:site-rank:reassess"
     minute: "54"
     hour: "18"
@@ -136,7 +136,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:license:fetch"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:license:fetch"
     minute: "0"
     hour: "0"
@@ -145,7 +145,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:serve-domains:update"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:serve-domains:update"
     minute: "0"
     hour: "0"
@@ -154,7 +154,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:wallet:transfer:cold"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:wallet:transfer:cold"
     minute: "*/30"
     job: "php {{ service_dir }}/artisan ops:wallet:transfer:cold && php {{ service_dir }}/artisan ops:wallet:transfer:check"
@@ -162,7 +162,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ads:broadcast-host"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ads:broadcast-host"
     minute: "0"
     hour: "*/12"
@@ -171,7 +171,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ads:fetch-hosts"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ads:fetch-hosts"
     minute: "30"
     hour: "*/6"
@@ -180,7 +180,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:events:clear"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:events:clear"
     minute: "50"
     hour: "*/1"
@@ -189,7 +189,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:targeting-reach:compute"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:targeting-reach:compute"
     minute: "35"
     hour: "3"
@@ -198,7 +198,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:targeting-reach:fetch"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:targeting-reach:fetch"
     minute: "45"
     hour: "*/3"
@@ -207,7 +207,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:reports:clear"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:reports:clear"
     minute: "45"
     hour: "2"
@@ -216,7 +216,7 @@
   become: true
 
 - name: "{{ service_name }} | setup | cron | add ops:demand:cdn:upload"
-  cron:
+  ansible.builtin.cron:
     name: "{{ service_name }} | ops:demand:cdn:upload"
     minute: "*/5"
     job: "php {{ service_dir }}/artisan ops:demand:cdn:upload"

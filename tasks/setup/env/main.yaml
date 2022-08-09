@@ -1,7 +1,8 @@
 ---
 - name: "{{ service_name }} | setup | env | Generate app secret"
-  ansible.builtin.shell: openssl rand -hex 16
+  ansible.builtin.command: openssl rand -hex 16
   register: cmd
+  changed_when: false
 
 - name: "{{ service_name }} | setup | env | Set app secret"
   ansible.builtin.lineinfile:

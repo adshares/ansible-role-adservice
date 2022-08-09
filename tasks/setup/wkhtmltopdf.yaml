@@ -1,10 +1,10 @@
 ---
 - name: "{{ service_name }} | setup | wkhtmltopdf | Install dependencies"
   ansible.builtin.apt:
-    name: [ 'fontconfig', 'libfontenc1', 'libxrender1', 'x11-common', 'xfonts-75dpi', 'xfonts-base', 'xfonts-encodings', 'xfonts-utils']
+    name: ['fontconfig', 'libfontenc1', 'libxrender1', 'x11-common', 'xfonts-75dpi', 'xfonts-base', 'xfonts-encodings', 'xfonts-utils']
   when: "'wkhtmltox' not in ansible_facts.packages"
 
-- name: "{{ service_name }} | setup | wkhtmltopdf | Install wkhtmltopdf"
+- name: "{{ service_name }} | setup | wkhtmltopdf | Install wkhtmltopdf" # noqa command-instead-of-module
   ansible.builtin.shell: |
     wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.$(lsb_release -sc)_amd64.deb
     apt install -y ./wkhtmltox_0.12.6-1.$(lsb_release -sc)_amd64.deb
