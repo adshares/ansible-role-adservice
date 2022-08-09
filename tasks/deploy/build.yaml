@@ -7,7 +7,7 @@
     force: false
     group: "{{ service_user }}"
     owner: "{{ service_user }}"
-    mode: 0644
+    mode: "0664"
   when: service_env_file_local != None and service_env_file_local and service_env_file_local|length > 0
 
 - name: "{{ service_name }} | deploy | build | Setting service env {{ service_env }}"
