@@ -6,7 +6,7 @@
   ansible.builtin.lineinfile:
     path: "{{ service_dir }}-init/{{ service_env_file_local }}"
     regexp: '^ADSERVER_BASE_URI='
-    line: "ADSERVER_BASE_URI=\"http://{{ adserver_prefix }}.{{ server_domain }}\""
+    line: "ADSERVER_BASE_URI=\"https://{{ adserver_prefix }}.{{ server_domain }}\""
 
 - name: "{{ service_name }} | setup | env | Set web application public URL (serve path)"
   ansible.builtin.lineinfile:

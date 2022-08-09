@@ -93,12 +93,6 @@
     regexp: '^ADUSER_BASE_URL='
     line: "ADUSER_BASE_URL=https://{{ aduser_prefix }}.{{ server_domain }}"
 
-- name: "{{ service_name }} | setup | env | Set internal AdUser URL"
-  ansible.builtin.lineinfile:
-    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
-    regexp: '^ADUSER_INTERNAL_URL='
-    line: "ADUSER_INTERNAL_URL=http://{{ aduser_prefix }}.{{ server_domain }}"
-
 # Wallet
 - name: "{{ service_name }} | setup | env | Set wallet workdir"
   ansible.builtin.lineinfile:
