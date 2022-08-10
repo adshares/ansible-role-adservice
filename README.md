@@ -57,14 +57,6 @@ AdUser module domain prefix (subdomain) - e.g. *au.example.com*
 
 Enables the use of certbot (for Let's Encrypt).
 
-    tech_email: "tech@{{ server_domain }}"
-
-AdUser module domain prefix (subdomain) - e.g. *tech@example.com*
-
-    support_email: "support@{{ server_domain }}"
-
-AdUser module domain prefix (subdomain) - e.g. *support@example.com*
-
     vendor_dir: /opt/adshares
 
 Service installation folder.
