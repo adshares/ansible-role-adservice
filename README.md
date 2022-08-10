@@ -93,7 +93,7 @@ Installing all modules:
 
     - hosts: servers
       roles:
-        - role: adservice
+        - role: adshares.adservice
           vars:
             service_name: "{{ item }}"
             server_domain: example.com
@@ -111,7 +111,7 @@ Updating all modules:
 
     - hosts: servers
       roles:
-        - role: adservice
+        - role: adshares.adservice
           vars:
             service_name: "{{ item }}"
             deploy: true
