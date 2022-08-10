@@ -51,7 +51,7 @@
 
 - name: "{{ service_name }} | setup | Setup Certbot"
   include_tasks: setup/certbot.yaml
-  when: setup_certbot
+  when: use_certbot and setup_certbot
 
 - name: "{{ service_name }} | setup | Setup wkhtmltopdf"
   include_tasks: setup/wkhtmltopdf.yaml

@@ -12,11 +12,13 @@ adserver_prefix: app
 adpanel_prefix: panel
 aduser_prefix: au
 
+use_certbot: true
+
 tech_email: "tech@{{ server_domain }}"
 support_email: "support@{{ server_domain }}"
 
 vendor_dir: /opt/adshares
 log_dir: /var/log/adshares
 
-clean_after_days: 7
 repo_version: master
+clean_after_days: 7

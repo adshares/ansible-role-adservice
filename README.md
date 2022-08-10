@@ -53,6 +53,10 @@ AdPanel module domain prefix (subdomain) - e.g. *panel.example.com*
 
 AdUser module domain prefix (subdomain) - e.g. *au.example.com*
 
+    use_certbot: true
+
+Enables the use of certbot (for Let's Encrypt).
+
     tech_email: "tech@{{ server_domain }}"
 
 AdUser module domain prefix (subdomain) - e.g. *tech@example.com*
@@ -73,13 +77,13 @@ Service logs folder.
 
 Service installation username.
 
-    clean_after_days: 7
-
-The period of keeping old version files.
-
     repo_version: master
 
 Service code version.
+
+    clean_after_days: 7
+
+The period of keeping old version files.
 
 Dependencies
 ------------
