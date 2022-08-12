@@ -141,4 +141,4 @@ Author Information
 * **[Maciej Pilarczyk](https://github.com/m-pilarczyk)** - _Programmer_
 * **[Paweł Podkalicki](https://github.com/PawelPodkalicki)** - _Programmer_
 
-See also the list of [contributors](https://github.com/adshares/aduser/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/adshares/ansible-role-adservice/contributors) who participated in this project.
