@@ -119,8 +119,33 @@ Updating all modules:
             - adpay
             - adcontroller
 
-License
--------
+## Contributing
+
+Please follow our [Contributing Guidelines](docs/CONTRIBUTING.md)
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning.
+For the versions available, see the [tags on this repository](https://github.com/adshares/ansible-role-adservice/tags).
+
+## Authors
+
+* **[Maciej Pilarczyk](https://github.com/m-pilarczyk)** - _Programmer_
+* **[Paweł Podkalicki](https://github.com/PawelPodkalicki)** - _Programmer_
+
+See also the list of [contributors](https://github.com/adshares/ansible-role-adservice/contributors) who participated in this project.
+
+## Related projects
+ 
+- [AdServer](https://github.com/adshares/adserver)
+- [AdPanel](https://github.com/adshares/adpanel)
+- [AdUser](https://github.com/adshares/aduser)
+- [AdPay](https://github.com/adshares/adpay)
+- [AdSelect](https://github.com/adshares/adselect)
+- [AdController](https://github.com/adshares/adcontroller)
+- [ADS](https://github.com/adshares/ads)
+
+## License
 
 This work is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -134,11 +159,3 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 
 You should have received a copy of the License along with this work.
 If not, see <https://www.gnu.org/licenses/gpl.html>.
-
-Author Information
-------------------
-
-* **[Maciej Pilarczyk](https://github.com/m-pilarczyk)** - _Programmer_
-* **[Paweł Podkalicki](https://github.com/PawelPodkalicki)** - _Programmer_
-
-See also the list of [contributors](https://github.com/adshares/ansible-role-adservice/contributors) who participated in this project.
