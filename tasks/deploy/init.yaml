@@ -17,15 +17,6 @@
   become_user: "{{ service_user }}"
   when: not service_dir_stat.stat.exists
 
-- name: "{{ service_name }} | deploy | init | Change init repo owner"
-  ansible.builtin.file:
-    path: "{{ service_dir }}-init"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: "0664"
-    recurse: true
-  when: not service_dir_stat.stat.exists
-
 - name: "{{ service_name }} | deploy | init | Check .env file"
   ansible.builtin.set_fact:
     create_env_file: true
@@ -67,3 +58,4 @@
 - name: "{{ service_name }} | deploy | init | Change service dir into symbolic link {{ service_dir }} -> {{ service_dir }}-init"
   ansible.builtin.command: "mv {{ service_dir }} {{ service_dir }}-init && ln -s {{ service_dir }}-init {{ service_dir }}"
   when: service_dir_stat.stat.exists and service_dir_stat.stat.isdir
+  become_user: "{{ service_user }}"
