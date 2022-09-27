@@ -6,7 +6,7 @@ listen.owner = {{ service_user }}
 listen.group = {{ server_user }}
 listen.mode = 0660
 
-pm = static
+pm = dynamic
 pm.max_children = 150
 pm.start_servers = 50
 pm.min_spare_servers = 25
