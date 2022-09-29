@@ -6,7 +6,7 @@
     state: directory
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
-    mode: '0777'
+    mode: '0775'
 
 - name: "{{ service_name }} | deploy | storage | Checking storage dir {{ storage_dir }}"
   ansible.builtin.stat:
@@ -22,7 +22,7 @@
   ansible.builtin.file:
     path: "{{ storage_dir }}/{{ service_name }}"
     state: directory
-    mode: "0755"
+    mode: "0775"
   when: not storage_dir_stat.stat.exists and not service_storage_dir_stat.stat.exists
 
 - name: "{{ service_name }} | deploy | storage | Copy service storage dir {{ service_storage_dir }}"
