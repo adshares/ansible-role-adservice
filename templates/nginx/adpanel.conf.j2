@@ -8,10 +8,6 @@ server {
     root /opt/{{ service_user }}/{{ service_name }}/dist;
     index index.html;
 
-    location /preview {
-        try_files /preview.html$is_args$args =404;
-    }
-
     location @no_acp {
         return 307 /404;
     }
