@@ -11,6 +11,12 @@
     update_cache: true
   when: "'percona-server-server-5.7' not in ansible_facts.packages"
 
+- name: "{{ service_name }} | setup | mysql | Set 'max_allowed_packet' variable"
+  ansible.builtin.lineinfile:
+    path: "/etc/mysql/percona-server.conf.d/mysqld.cnf"
+    regexp: '^max_allowed_packet='
+    line: "max_allowed_packet=33554432"
+
 - name: "{{ service_name }} | setup | mysql | Start Percona"
   ansible.builtin.service:
     name: mysql
@@ -27,9 +33,6 @@
 
 - name: "{{ service_name }} | setup | mysql | Flush privileges" # noqa no-changed-when risky-shell-pipe
   ansible.builtin.shell: echo "FLUSH PRIVILEGES;" | mysql
-
-- name: "{{ service_name }} | setup | mysql | Set max_allowed_packet" # noqa no-changed-when risky-shell-pipe
-  ansible.builtin.shell: echo "SET global max_allowed_packet=33554432;" | mysql
 
 - name: "{{ service_name }} | setup | mysql | Cleanup"
   ansible.builtin.file:
