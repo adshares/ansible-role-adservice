@@ -37,6 +37,12 @@
     regexp: '^max_execution_time ='
     line: "max_execution_time = 300"
 
+- name: "{{ service_name }} | setup | php | Config PHP post size"
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ php_version }}/fpm/php.ini"
+    regexp: '^post_max_size ='
+    line: "post_max_size = 32M"
+
 - name: "{{ service_name }} | setup | php | Config PHP upload size"
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/fpm/php.ini"
