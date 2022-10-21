@@ -11,11 +11,18 @@
     update_cache: true
   when: "'percona-server-server-5.7' not in ansible_facts.packages"
 
-- name: "{{ service_name }} | setup | mysql | Set 'max_allowed_packet' variable"
+- name: "{{ service_name }} | setup | mysql | Set variables"
   ansible.builtin.lineinfile:
     path: "/etc/mysql/percona-server.conf.d/mysqld.cnf"
-    regexp: '^max_allowed_packet='
-    line: "max_allowed_packet=33554432"
+    regexp: "^{{ it.key }}\\s*="
+    line: "{{ it.key }}={{ it.value }}"
+  loop:
+    - { key: 'character_set_server', value: 'utf8mb4' }
+    - { key: 'collation_server', value: 'utf8mb4_unicode_520_ci' }
+    - { key: 'max_allowed_packet', value: '33554432' }
+  loop_control:
+    label: "{{ it.key }}"
+    loop_var: 'it'
 
 - name: "{{ service_name }} | setup | mysql | Start Percona"
   ansible.builtin.service:
