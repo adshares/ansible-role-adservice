@@ -40,8 +40,14 @@
 - name: "{{ service_name }} | setup | php | Config PHP upload size"
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/fpm/php.ini"
-    regexp: '^upload_max_filesize ='
-    line: "upload_max_filesize = 32M"
+    regexp: "^{{ it.key }} ="
+    line: "{{ it.key }} = {{ it.value }}"
+  loop:
+    - { key: 'post_max_size', value: '32M' }
+    - { key: 'upload_max_filesize', value: '32M' }
+  loop_control:
+    label: "{{ it.key }}"
+    loop_var: 'it'
 
 - name: "{{ service_name }} | setup | php | Config PHP-FPM pool"
   ansible.builtin.template:

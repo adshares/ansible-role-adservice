@@ -11,6 +11,25 @@
     update_cache: true
   when: "'percona-server-server-5.7' not in ansible_facts.packages"
 
+- name: "{{ service_name }} | setup | mysql | Set mysqld variables"
+  ansible.builtin.lineinfile:
+    path: "/etc/mysql/percona-server.conf.d/mysqld.cnf"
+    regexp: "^{{ it.key }}\\s*="
+    line: "{{ it.key }}={{ it.value }}"
+  loop:
+    - { key: 'character_set_server', value: 'utf8mb4' }
+    - { key: 'collation_server', value: 'utf8mb4_unicode_520_ci' }
+    - { key: 'max_allowed_packet', value: '32M' }
+  loop_control:
+    label: "{{ it.key }}"
+    loop_var: 'it'
+
+- name: "{{ service_name }} | setup | mysql | Set mysqldump variables"
+  ansible.builtin.lineinfile:
+    path: "/etc/mysql/conf.d/mysqldump.cnf"
+    regexp: "^max_allowed_packet\\s*="
+    line: "max_allowed_packet=32M"
+
 - name: "{{ service_name }} | setup | mysql | Start Percona"
   ansible.builtin.service:
     name: mysql
@@ -22,10 +41,10 @@
 - name: "{{ service_name }} | setup | mysql | Create DB '{{ service_user }}_{{ service_name }}'" # noqa no-changed-when risky-shell-pipe
   ansible.builtin.shell: echo "CREATE DATABASE IF NOT EXISTS {{ service_user }}_{{ service_name | replace('-', '_') }};" | mysql
 
-- name: "{{ service_name }} | setup | mysql | Grant privileges'" # noqa no-changed-when risky-shell-pipe
+- name: "{{ service_name }} | setup | mysql | Grant privileges" # noqa no-changed-when risky-shell-pipe
   ansible.builtin.shell: echo "GRANT ALL ON {{ service_user }}_{{ service_name | replace('-', '_') }}.* TO '{{ service_user }}'@'localhost';" | mysql
 
-- name: "{{ service_name }} | setup | mysql | Flush privileges'" # noqa no-changed-when risky-shell-pipe
+- name: "{{ service_name }} | setup | mysql | Flush privileges" # noqa no-changed-when risky-shell-pipe
   ansible.builtin.shell: echo "FLUSH PRIVILEGES;" | mysql
 
 - name: "{{ service_name }} | setup | mysql | Cleanup"
