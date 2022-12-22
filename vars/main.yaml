@@ -10,7 +10,7 @@ setup_certbot: false
 setup_wkhtmltopdf: false
 
 # Configuration
-adcontroller_public_url: "/acp"
+adcontroller_public_path: "/acp"
 adcontroller_server_port: 8030
 php_version: 8.1
 php_pool: false

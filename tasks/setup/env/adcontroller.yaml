@@ -11,5 +11,17 @@
 - name: "{{ service_name }} | setup | env | Set web application public URL (serve path)"
   ansible.builtin.lineinfile:
     path: "{{ service_dir }}-init/{{ service_env_file_local }}"
-    regexp: '^PUBLIC_URL='
-    line: "PUBLIC_URL=\"{{ adcontroller_public_url }}\""
+    regexp: '^PUBLIC_HOST='
+    line: "PUBLIC_HOST=\"{{ adpanel_prefix }}.{{ server_domain }}\""
+
+- name: "{{ service_name }} | setup | env | Set web application public URL (serve path)"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^PUBLIC_PORT='
+    line: "PUBLIC_PORT=\"80\""
+
+- name: "{{ service_name }} | setup | env | Set web application public URL (serve path)"
+  ansible.builtin.lineinfile:
+    path: "{{ service_dir }}-init/{{ service_env_file_local }}"
+    regexp: '^PUBLIC_PATH='
+    line: "PUBLIC_PATH=\"{{ adcontroller_public_path }}\""
