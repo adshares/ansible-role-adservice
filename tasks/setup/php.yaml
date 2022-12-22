@@ -31,13 +31,18 @@
       - "{{ php_package }}-imagick"
       - "{{ php_package }}-gmp"
 
-- name: "{{ service_name }} | setup | php | Config PHP execution time"
+- name: "{{ service_name }} | setup | php | Config PHP CLI"
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/cli/php.ini"
-    regexp: '^max_execution_time ='
-    line: "max_execution_time = 300"
+    regexp: "^{{ it.key }} ="
+    line: "{{ it.key }} = {{ it.value }}"
+  loop:
+    - { key: 'max_execution_time', value: '300' }
+  loop_control:
+    label: "{{ it.key }}"
+    loop_var: 'it'
 
-- name: "{{ service_name }} | setup | php | Config PHP upload size"
+- name: "{{ service_name }} | setup | php | Config PHP FPM"
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/fpm/php.ini"
     regexp: "^{{ it.key }} ="
@@ -45,6 +50,7 @@
   loop:
     - { key: 'post_max_size', value: '32M' }
     - { key: 'upload_max_filesize', value: '32M' }
+    - { key: 'memory_limit', value: '512M' }
   loop_control:
     label: "{{ it.key }}"
     loop_var: 'it'
