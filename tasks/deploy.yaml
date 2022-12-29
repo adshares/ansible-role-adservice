@@ -12,16 +12,15 @@
   include_tasks: deploy/init.yaml
   when: not service_dir_stat.stat.exists or service_dir_stat.stat.isdir
 
-- name: "{{ service_name }} | deploy | Deploy JWT"
-  include_tasks: deploy/jwt.yaml
-  when: copy_jwt or create_jwt
-
 - name: "{{ service_name }} | deploy | Create storage"
   include_tasks: deploy/storage.yaml
   when: service_storage_dir != None and service_storage_dir and service_storage_dir|length > 0
 
 - name: "{{ service_name }} | deploy | Update service"
   include_tasks: deploy/update.yaml
+
+#- name: "{{ service_name }} | deploy | Migrate service"
+#  include_tasks: deploy/migrate.yaml
 
 - name: "{{ service_name }} | deploy | Build service"
   include_tasks: deploy/build.yaml

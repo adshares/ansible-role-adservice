@@ -1,6 +1,6 @@
 ---
 - name: "{{ service_name }} | setup | mysql | Add Percona repository" # noqa command-instead-of-module
-  ansible.builtin.command: |
+  ansible.builtin.shell: |
     wget -q https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb
     dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb
   when: "'percona-server-server-5.7' not in ansible_facts.packages"

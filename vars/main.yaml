@@ -40,7 +40,6 @@ repo_url: "https://github.com/adshares/{{ service_name }}.git"
 
 # Deploy
 copy_jwt: false
-create_jwt: false
 deploy_version: "{{ ansible_date_time.iso8601_basic_short }}"
 deploy_dir: "{{ service_dir }}-{{ deploy_version }}"
 deploy_refresh: "composer --no-interaction --working-dir={{ service_dir }} dump-env prod"

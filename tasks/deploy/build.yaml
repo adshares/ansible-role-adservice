@@ -24,6 +24,16 @@
     line: "APP_VERSION={{ git_version }}"
   when: service_env_file_local != None and service_env_file_local and service_env_file_local|length > 0
 
+- name: "{{ service_name }} | deploy | build | Get AdServer's public key"
+  ansible.builtin.copy:
+    src: "{{ vendor_dir }}/adserver/config/jwt/oauth-public.key"
+    dest: "{{ deploy_dir }}/config/jwt/oauth-public.key"
+    remote_src: true
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: "0644"
+  when: copy_jwt
+
 - name: "{{ service_name }} | deploy | build | Checking build script"
   ansible.builtin.stat:
     path: "{{ deploy_dir }}/deploy/build.sh"
