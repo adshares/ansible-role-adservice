@@ -5,6 +5,12 @@
     update_cache: true
   when: "'python3' not in ansible_facts.packages"
 
+- name: "{{ service_name }} | setup | certbot | Install pip3"
+  ansible.builtin.apt:
+    name: python3-pip
+    update_cache: true
+  when: "'python3-pip' not in ansible_facts.packages"
+
 - name: "{{ service_name }} | setup | certbot | Upgrade pip"
   ansible.builtin.pip:
     name: pip
