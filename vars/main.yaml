@@ -1,4 +1,9 @@
 ---
+# Requirements
+min_cores: 4
+min_memory_gb: 2
+min_disk_gb: 256
+
 # Setup
 setup_ads: false
 setup_elastic: false

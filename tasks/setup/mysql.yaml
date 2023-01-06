@@ -11,7 +11,7 @@
     update_cache: true
   when: "'percona-server-server-5.7' not in ansible_facts.packages"
 
-- name: "{{ service_name }} | setup | mysql | Set mysqld variables"
+- name: "{{ service_name }} | setup | mysql | Set mysqld config"
   ansible.builtin.lineinfile:
     path: "/etc/mysql/percona-server.conf.d/mysqld.cnf"
     regexp: "^{{ it.key }}\\s*="
@@ -19,16 +19,57 @@
   loop:
     - { key: 'character_set_server', value: 'utf8mb4' }
     - { key: 'collation_server', value: 'utf8mb4_unicode_520_ci' }
-    - { key: 'max_allowed_packet', value: '32M' }
+    - { key: 'transaction_isolation', value: 'REPEATABLE-READ' }
+    - { key: 'skip_name_resolve', value: 'ON' }
+    - { key: 'long_query_time', value: '0' }
+    - { key: 'slow_query_log', value: '0' }
+    - { key: 'log_slow_verbosity', value: 'microtime,innodb' }
+    - { key: 'sync_binlog', value: '0' }
+    - { key: 'open_files_limit', value: '10240' }
+    - { key: 'wait_timeout', value: '30' }
+    - { key: 'back_log', value: '2048' }
+    - { key: 'key_buffer_size', value: '16M' }
+    - { key: 'max_allowed_packet', value: '160M' }
+    - { key: 'max_connections', value: '1024' }
+    - { key: 'max_heap_table_size', value: '64M' }
+    - { key: 'thread_stack', value: '192K' }
+    - { key: 'thread_cache_size', value: '512' }
+    - { key: 'tmp_table_size', value: '64M' }
+    - { key: 'sort_buffer_size', value: '64M' }
+    - { key: 'table_open_cache', value: '10240' }
+    - { key: 'table_definition_cache', value: '10240' }
+    - { key: 'innodb_buffer_pool_size', value: "{{ (ansible_memtotal_mb / 2) | int }}M" }
+    - { key: 'innodb_buffer_pool_instances', value: "{{ [ansible_processor_vcpus, ansible_memtotal_mb / 2] | min | int }}" }
+    - { key: 'innodb_stats_on_metadata', value: 'OFF' }
+    - { key: 'innodb_io_capacity', value: '1000' }
+    - { key: 'innodb_io_capacity_max', value: '2000' }
+    - { key: 'innodb_read_io_threads', value: "{{ (ansible_processor_vcpus / 2) | int }}" }
+    - { key: 'innodb_write_io_threads', value: "{{ (ansible_processor_vcpus / 2) | int }}" }
+    - { key: 'innodb_autoinc_lock_mode', value: '2' }
+    - { key: 'innodb_log_file_size', value: '1G' }
+    - { key: 'innodb_log_files_in_group', value: '2' }
+    - { key: 'innodb_log_buffer_size', value: '64M' }
+    - { key: 'innodb_flush_log_at_trx_commit', value: '2' }
+    - { key: 'innodb_lock_wait_timeout', value: '2' }
+    - { key: 'innodb_thread_concurrency', value: '0' }
+    - { key: 'innodb_flush_method', value: 'O_DIRECT_NO_FSYNC' }
+    - { key: 'innodb_buffer_pool_load_at_startup', value: 'ON' }
+    - { key: 'innodb_buffer_pool_dump_at_shutdown', value: 'ON' }
+    - { key: 'net_read_timeout', value: '5' }
+    - { key: 'net_write_timeout', value: '5' }
+    - { key: 'net_retry_count', value: '5' }
+    - { key: 'query_cache_limit', value: '1M' }
+    - { key: 'query_cache_size', value: '0' }
+    - { key: 'query_cache_type', value: '0' }
   loop_control:
     label: "{{ it.key }}"
     loop_var: 'it'
 
-- name: "{{ service_name }} | setup | mysql | Set mysqldump variables"
+- name: "{{ service_name }} | setup | mysql | Set mysqldump config"
   ansible.builtin.lineinfile:
     path: "/etc/mysql/conf.d/mysqldump.cnf"
     regexp: "^max_allowed_packet\\s*="
-    line: "max_allowed_packet=32M"
+    line: "max_allowed_packet=160M"
 
 - name: "{{ service_name }} | setup | mysql | Start Percona"
   ansible.builtin.service:

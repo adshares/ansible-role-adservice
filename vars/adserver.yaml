@@ -14,3 +14,6 @@ deploy_services:
   - "php{{ php_version }}-fpm"
   - supervisor
 php_pool: true
+min_cores: 8
+min_memory_gb: 8
+min_disk_gb: 512

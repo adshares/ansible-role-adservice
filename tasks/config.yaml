@@ -7,3 +7,18 @@
   with_first_found:
     - files: ["{{ service_name }}.yaml"]
       skip: true
+
+- name: "{{ service_name }} | config | Check CPU (min {{ min_cores }} cores)"
+  ansible.builtin.fail:
+    msg: "The minimum required number of CPU cores is {{ min_cores }}."
+  when: ansible_processor_cores < min_cores
+
+- name: "{{ service_name }} | config | Check RAM (min {{ min_memory_gb }} GB)"
+  ansible.builtin.fail:
+    msg: "The minimum required amount of RAM is {{ min_memory_gb }} GB."
+  when: ansible_memtotal_mb < (min_memory_gb * 1000)
+
+- name: "{{ service_name }} | config | Check HDD (min {{ min_disk_gb }} GB) "
+  ansible.builtin.fail:
+    msg: "The minimum required amount of disk space is {{ min_disk_gb }} GB."
+  when: (ansible_mounts | selectattr("mount", "equalto", "/") | list)[0].size_total < (min_disk_gb * 1000 * 1000 * 1000)

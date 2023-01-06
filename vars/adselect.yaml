@@ -3,3 +3,5 @@ setup_mysql: false
 server_host: localhost
 server_port: 8011
 php_pool: true
+min_cores: 8
+min_memory_gb: 8
