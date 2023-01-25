@@ -3,7 +3,9 @@
     file: "../vars/main.yaml"
 
 - name: "{{ service_name }} | config | Load config"
-  ansible.builtin.include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ config_file }}"
+  loop_control:
+    loop_var: 'config_file'
   with_first_found:
     - files: ["{{ service_name }}.yaml"]
       skip: true

@@ -50,7 +50,7 @@
     - { key: 'innodb_log_files_in_group', value: '2' }
     - { key: 'innodb_log_buffer_size', value: '64M' }
     - { key: 'innodb_flush_log_at_trx_commit', value: '2' }
-    - { key: 'innodb_lock_wait_timeout', value: '2' }
+    - { key: 'innodb_lock_wait_timeout', value: '4' }
     - { key: 'innodb_thread_concurrency', value: '0' }
     - { key: 'innodb_flush_method', value: 'O_DIRECT_NO_FSYNC' }
     - { key: 'innodb_buffer_pool_load_at_startup', value: 'ON' }
@@ -74,7 +74,7 @@
 - name: "{{ service_name }} | setup | mysql | Start Percona"
   ansible.builtin.service:
     name: mysql
-    state: started
+    state: restarted
 
 - name: "{{ service_name }} | setup | mysql | Create DB user '{{ service_user }}'" # noqa no-changed-when risky-shell-pipe
   ansible.builtin.shell: echo "CREATE USER IF NOT EXISTS '{{ service_user }}'@'localhost' IDENTIFIED BY '{{ service_user }}';" | mysql

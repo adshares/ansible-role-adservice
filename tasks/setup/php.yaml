@@ -34,7 +34,7 @@
 - name: "{{ service_name }} | setup | php | Config PHP CLI"
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/cli/php.ini"
-    regexp: "^{{ it.key }} ="
+    regexp: "^{{ it.key }}\\s*="
     line: "{{ it.key }} = {{ it.value }}"
   loop:
     - { key: 'max_execution_time', value: '300' }
@@ -50,7 +50,7 @@
   loop:
     - { key: 'post_max_size', value: '32M' }
     - { key: 'upload_max_filesize', value: '32M' }
-    - { key: 'memory_limit', value: '512M' }
+    - { key: 'memory_limit', value: '1G' }
   loop_control:
     label: "{{ it.key }}"
     loop_var: 'it'
