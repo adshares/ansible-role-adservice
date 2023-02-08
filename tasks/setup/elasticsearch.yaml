@@ -17,7 +17,7 @@
 
 - name: "{{ service_name }} | setup | elastic | Set elastic config"
   ansible.builtin.lineinfile:
-    path: "etc/elasticsearch/elasticsearch.yml"
+    path: "/etc/elasticsearch/elasticsearch.yml"
     regexp: "^{{ it.key }}\\s*:"
     line: "{{ it.key }}: {{ it.value }}"
   loop:
