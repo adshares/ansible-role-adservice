@@ -1,0 +1,18 @@
+[program:{{ service_user }}_{{ service_name }}_worker]
+directory=/opt/{{ service_user }}/{{ service_name }}
+command=php bin/console messenger:consume async -n -vv
+pidfile=/var/run/{{ service_user }}/{{ service_name }}_worker.pid
+
+user={{ service_user }}
+
+autostart=true
+autorestart=true
+startretries=20
+
+stdout_logfile={{ log_dir }}/{{ service_name }}_worker.log
+stdout_logfile_maxbytes=5000000
+
+stderr_logfile={{ log_dir }}/{{ service_name }}_worker.log
+stderr_logfile_maxbytes=5000000
+
+environment=
