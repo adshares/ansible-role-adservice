@@ -1,6 +1,6 @@
 ---
 - name: "{{ service_name }} | setup | node | Add Node.js repository" # noqa risky-shell-pipe command-instead-of-module
-  ansible.builtin.shell: curl -sL https://deb.nodesource.com/setup_14.x | bash -
+  ansible.builtin.shell: curl -sL https://deb.nodesource.com/setup_18.x | bash -
   when: "'nodejs' not in ansible_facts.packages"
 
 - name: "{{ service_name }} | setup | node | Install Node.js"
