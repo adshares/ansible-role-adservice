@@ -230,3 +230,12 @@
     job: "php {{ service_dir }}/artisan ops:supply:site-ads-txt:check"
   become_user: "{{ service_user }}"
   become: true
+
+- name: "{{ service_name }} | setup | cron | add ops:email-notifications:send"
+  ansible.builtin.cron:
+    name: "{{ service_name }} | ops:email-notifications:send"
+    minute: "25"
+    hour: "7,19"
+    job: "php {{ service_dir }}/artisan ops:email-notifications:send"
+  become_user: "{{ service_user }}"
+  become: true
