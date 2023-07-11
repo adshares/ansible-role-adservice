@@ -76,14 +76,14 @@
     name: mysql
     state: restarted
 
-- name: "{{ service_name }} | setup | mysql | Create DB user '{{ service_user }}'" # noqa no-changed-when risky-shell-pipe
-  ansible.builtin.shell: echo "CREATE USER IF NOT EXISTS '{{ service_user }}'@'localhost' IDENTIFIED BY '{{ service_user }}';" | mysql
+- name: "{{ service_name }} | setup | mysql | Create DB user '{{ service_user | replace('-', '_') }}'" # noqa no-changed-when risky-shell-pipe
+  ansible.builtin.shell: echo "CREATE USER IF NOT EXISTS '{{ service_user | replace('-', '_') }}'@'localhost' IDENTIFIED BY '{{ service_user | replace('-', '_') }}';" | mysql
 
-- name: "{{ service_name }} | setup | mysql | Create DB '{{ service_user }}_{{ service_name }}'" # noqa no-changed-when risky-shell-pipe
-  ansible.builtin.shell: echo "CREATE DATABASE IF NOT EXISTS {{ service_user }}_{{ service_name | replace('-', '_') }};" | mysql
+- name: "{{ service_name }} | setup | mysql | Create DB '{{ service_user | replace('-', '_') }}_{{ service_name | replace('-', '_') }}'" # noqa no-changed-when risky-shell-pipe
+  ansible.builtin.shell: echo "CREATE DATABASE IF NOT EXISTS {{ service_user | replace('-', '_') }}_{{ service_name | replace('-', '_') }};" | mysql
 
 - name: "{{ service_name }} | setup | mysql | Grant privileges" # noqa no-changed-when risky-shell-pipe
-  ansible.builtin.shell: echo "GRANT ALL ON {{ service_user }}_{{ service_name | replace('-', '_') }}.* TO '{{ service_user }}'@'localhost';" | mysql
+  ansible.builtin.shell: echo "GRANT ALL ON {{ service_user | replace('-', '_') }}_{{ service_name | replace('-', '_') }}.* TO '{{ service_user | replace('-', '_') }}'@'localhost';" | mysql
 
 - name: "{{ service_name }} | setup | mysql | Flush privileges" # noqa no-changed-when risky-shell-pipe
   ansible.builtin.shell: echo "FLUSH PRIVILEGES;" | mysql
