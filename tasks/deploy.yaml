@@ -19,9 +19,6 @@
 - name: "{{ service_name }} | deploy | Update service"
   include_tasks: deploy/update.yaml
 
-#- name: "{{ service_name }} | deploy | Migrate service"
-#  include_tasks: deploy/migrate.yaml
-
 - name: "{{ service_name }} | deploy | Build service"
   include_tasks: deploy/build.yaml
 

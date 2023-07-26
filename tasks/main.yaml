@@ -9,3 +9,7 @@
 - name: "{{ service_name }} | Deploy service"
   include_tasks: deploy.yaml
   when: deploy
+
+- name: "{{ service_name }} | Migrate service"
+  include_tasks: migrate.yaml
+  when: migrate

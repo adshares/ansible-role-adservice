@@ -1,0 +1,5 @@
+- name: "{{ service_name }} | migrate | Update cron"
+  include_tasks: setup/cron.yaml
+
+- name: "{{ service_name }} | migrate | Update supervisor"
+  include_tasks: setup/supervisor.yaml

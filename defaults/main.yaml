@@ -4,6 +4,7 @@ service_user: adshares
 
 setup: false
 deploy: false
+migrate: false
 
 server_domain: localhost
 server_name: "Adshares AdServer"
