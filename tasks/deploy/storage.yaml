@@ -46,6 +46,4 @@
 
 - name: "{{ service_name }} | deploy | storage | Change service storage dir owner"
   ansible.builtin.command: "chown -h {{ service_user }}:{{ service_user }} {{ service_storage_dir }}"
-  args:
-    warn: false
   when: not service_storage_dir_stat.stat.exists or service_storage_dir_stat.stat.isdir

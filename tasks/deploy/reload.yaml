@@ -17,8 +17,6 @@
 
 - name: "{{ service_name }} | deploy | reload | Change service dir owner" # noqa no-changed-when
   ansible.builtin.command: "chown -h {{ service_user }}:{{ service_user }} {{ service_dir }}"
-  args:
-    warn: false
 
 - name: "{{ service_name }} | deploy | reload | Refresh env"
   ansible.builtin.command: "{{ deploy_refresh }}"

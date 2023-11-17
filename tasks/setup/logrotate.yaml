@@ -7,8 +7,6 @@
 
 - name: "{{ service_name }} | setup | logrotate | Change log storage dir owner" # noqa no-changed-when
   ansible.builtin.command: "chown -h {{ service_user }}:{{ service_user }} {{ log_dir }}"
-  args:
-    warn: false
 
 - name: "adservice : {{ service_name }} | setup | logrotate | Install logrotate"
   ansible.builtin.include_role:

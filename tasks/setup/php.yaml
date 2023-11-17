@@ -77,7 +77,6 @@
   args:
     chdir: /usr/src/
     creates: /usr/local/bin/composer
-    warn: false
   when: not composer_stat.stat.exists
 
 - name: "{{ service_name }} | setup | php | Add Composer to global path"
